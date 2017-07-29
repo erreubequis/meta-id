@@ -68,7 +68,7 @@ general ones. Authorization things (like authBasic) act as a 'barrier' and
 should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
-  { "/", cgiRedirect, "/home.html" },
+  { "/", cgiRedirect, "/meta.html" },
   { "/menu", cgiMenu, NULL },
   { "/flash/next", cgiGetFirmwareNext, NULL },
   { "/flash/upload", cgiUploadFirmware, NULL },

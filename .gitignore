@@ -17,3 +17,5 @@ espfs/mkespfsimage/mman-win32/libmman.a
 .localhistory/
 local.conf
 *.tgz
+esp-open-sdk/
+*~
