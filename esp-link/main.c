@@ -20,6 +20,7 @@
 #include "cgiflash.h"
 #include "cgioptiboot.h"
 #include "cgimega.h"
+#include "cgimeta.h"
 #include "cgiwebserversetup.h"
 #include "auth.h"
 #include "espfs.h"
@@ -69,6 +70,7 @@ should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
   { "/", cgiRedirect, "/meta.html" },
+  { "/meta.wav", cgiMetaWav, NULL },
   { "/menu", cgiMenu, NULL },
   { "/flash/next", cgiGetFirmwareNext, NULL },
   { "/flash/upload", cgiUploadFirmware, NULL },
