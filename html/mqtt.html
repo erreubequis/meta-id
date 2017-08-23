@@ -83,6 +83,21 @@
             </form>
           </div>
           <div class="card">
+            <h1>Status reporting
+              <div id="mqtt-test-spinner" class="spinner spinner-small"></div>
+            </h1>
+            <form action="#" id="mqtt-test-form" class="pure-form" hidden>
+              <div class="form-horizontal">
+                <input name="mqtt-test"/>
+                <label>Enable status reporting via MQTT</label>
+              </div>
+              <br>
+              <button id="mqtt-test-button" type="submit" class="pure-button button-primary">
+                Send !
+              </button>
+            </form>
+          </div>
+          <div class="card">
             <h1>REST</h1>
             <p>REST requests are enabled as soon as SLIP is enabled.
             There are no REST-specific settings.</p>
@@ -98,6 +113,7 @@
 onLoad(function() {
   fetchMqtt();
   bnd($("#mqtt-form"), "submit", changeMqtt);
+  bnd($("#mqtt-test-form"), "submit", changeMqttTest);
   bnd($("#mqtt-status-form"), "submit", changeMqttStatus);
 });
 </script>

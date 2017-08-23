@@ -72,6 +72,7 @@ static const MimeMap mimeTypes[] = {
   { "css", "text/css" },
   { "js", "text/javascript" },
   { "txt", "text/plain" },
+  { "wav", "audio/wav" },
   { "jpg", "image/jpeg" },
   { "jpeg", "image/jpeg" },
   { "png", "image/png" },
