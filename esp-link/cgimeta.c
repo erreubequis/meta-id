@@ -20,6 +20,10 @@
 #endif
 #define DBG(format, ...) do { os_printf(format, ## __VA_ARGS__); } while(0)
 
+int ICACHE_FLASH_ATTR cgiMetaGetGpio(HttpdConnData *connData) {
+
+}
+	
 int ICACHE_FLASH_ATTR cgiMetaWav(HttpdConnData *connData) {
 /*
 from https://codereview.stackexchange.com/questions/105272/writing-computer-generated-music-to-a-wav-file-in-c
