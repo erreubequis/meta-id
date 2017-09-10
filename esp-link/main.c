@@ -71,6 +71,7 @@ should be placed above the URLs they protect.
 HttpdBuiltInUrl builtInUrls[] = {
   { "/", cgiRedirect, "/meta.html" },
   { "/meta.wav", cgiMetaWav, NULL },
+  { "/meta/gpio", cgiMetaGpio, NULL },
   { "/menu", cgiMenu, NULL },
   { "/flash/next", cgiGetFirmwareNext, NULL },
   { "/flash/upload", cgiUploadFirmware, NULL },
@@ -186,6 +187,8 @@ user_init(void) {
   // Status LEDs
   statusInit();
   serledInit();
+  cgiMetaInit();
+
   // Wifi
   wifiInit();
   // init the flash filesystem with the html stuff

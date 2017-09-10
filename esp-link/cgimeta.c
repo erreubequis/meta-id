@@ -20,10 +20,126 @@
 #endif
 #define DBG(format, ...) do { os_printf(format, ## __VA_ARGS__); } while(0)
 
+// todo : typedef MetaLimen
+char MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
+
+void ICACHE_FLASH_ATTR cgiMetaInit() {
+  for (int i=0; i<16; i++) {
+	MetaLimen[i] = 0;
+	}
+}
+
 int ICACHE_FLASH_ATTR cgiMetaGetGpio(HttpdConnData *connData) {
+  char buff[1024];
+  int len;
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+  len = os_sprintf(buff, "{ ");
+  for (int i=0; i<15; i++) {
+ 	if (MetaLimen[i]>0 ){ 
+		MetaLimen[i] = GPIO_INPUT_GET(GPIO_ID_PIN(i))+1;
+	}
+	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d, ",i,MetaLimen[i]);
+  }
+ 	if (MetaLimen[15]>0 ){ 
+		MetaLimen[15] = GPIO_INPUT_GET(GPIO_ID_PIN(15))+1;
+	}
+	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d ",15,MetaLimen[15]);
+
+	len += os_sprintf(buff+len,"}");
+  jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
+  return HTTPD_CGI_DONE;
 
 }
 	
+int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
+// set input/output high/output low
+
+  char buff[1024];
+  int len;
+  int8_t ok = 0; // error indicator
+  int8_t num;
+  int8_t out;
+  ok |= getInt8Arg(connData, "num", &num);
+  ok |= getInt8Arg(connData, "v", &out);
+	if (!ok){
+		len = os_sprintf(buff, "invalid parameter");
+		jsonHeader(connData, 200);
+		httpdSend(connData, buff, len);
+		return HTTPD_CGI_DONE;
+	}
+	if (num < 0 || num > 15){
+		len = os_sprintf(buff, "ko: invalid number %d ",num);
+		jsonHeader(connData, 200);
+		httpdSend(connData, buff, len);
+		return HTTPD_CGI_DONE;
+	}
+	if (out < -2 || out > 2){
+		len = os_sprintf(buff, "ko: invalid value %d ",out);
+		jsonHeader(connData, 200);
+		httpdSend(connData, buff, len);
+		return HTTPD_CGI_DONE;
+	}
+	if(MetaLimen[num]==0){
+		switch(num){
+			case 0:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO0); break;
+			case 1:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO1); break;
+			case 2:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO2); break;
+			case 3:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO3); break;
+			case 4:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO4); break;
+			case 5:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO5); break;
+//			case 6:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO6); break;
+//			case 7:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO7); break;
+//			case 8:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO8); break;
+			case 9:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO9); break;
+			case 10:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO10); break;
+//			case 11:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO11); break;
+			case 12:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO12); break;
+			case 13:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO13); break;
+			case 14:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO14); break;
+			case 15:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO15); break;
+			default:
+				len = os_sprintf(buff, "ko: unhandled number %d ",num);
+				jsonHeader(connData, 200);
+				httpdSend(connData, buff, len);
+				return HTTPD_CGI_DONE;
+		}
+	}
+
+  len = os_sprintf(buff, "%d",ok);
+  if(out == -1){
+	GPIO_OUTPUT_SET(GPIO_ID_PIN(num), 1); 
+	PIN_PULLUP_EN(PERIPHS_IO_MUX_MTDI_U); 
+	  }
+  if(out == -2){
+	GPIO_OUTPUT_SET(GPIO_ID_PIN(num), 0); 
+	PIN_PULLUP_EN(PERIPHS_IO_MUX_MTDI_U); 
+	  }
+  if(out == 1){
+	GPIO_DIS_OUTPUT(GPIO_ID_PIN(num)); 
+	  }
+   MetaLimen[num]=out;
+
+  jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
+  return HTTPD_CGI_DONE;
+
+}
+
+
+
+int ICACHE_FLASH_ATTR cgiMetaGpio(HttpdConnData *connData) {
+  if (connData->conn==NULL) return HTTPD_CGI_DONE; // Connection aborted. Clean up.
+  if (connData->requestType == HTTPD_METHOD_GET) {
+    return cgiMetaGetGpio(connData);
+  } else if (connData->requestType == HTTPD_METHOD_POST) {
+    return cgiMetaSetGpio(connData);
+  } else {
+    jsonHeader(connData, 404);
+    return HTTPD_CGI_DONE;
+  }
+}
+
 int ICACHE_FLASH_ATTR cgiMetaWav(HttpdConnData *connData) {
 /*
 from https://codereview.stackexchange.com/questions/105272/writing-computer-generated-music-to-a-wav-file-in-c
