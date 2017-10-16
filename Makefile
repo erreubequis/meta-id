@@ -42,7 +42,7 @@
 
 # If CHANGE_TO_STA is set to "yes" the esp-link module will switch to station mode
 # once successfully connected to an access point. Else it will stay in STA+AP mode.
-CHANGE_TO_STA ?= yes
+CHANGE_TO_STA ?= no
 
 # hostname or IP address for wifi flashing
 ESP_HOSTNAME  ?= esp-link
@@ -134,6 +134,7 @@ YUI_COMPRESSOR ?= yuicompressor-2.4.8.jar
 
 HTML_PATH = $(abspath ./html)/
 WIFI_PATH = $(HTML_PATH)wifi/
+TEXT_PATH = $(HTML_PATH)text/
 
 ESP_FLASH_MAX       ?= 503808  # max bin file
 
@@ -425,8 +426,8 @@ ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 $(BUILD_BASE)/espfs_img.o: tools/$(HTML_COMPRESSOR)
 endif
 
-$(BUILD_BASE)/espfs_img.o: html/ html/wifi/ espfs/mkespfsimage/mkespfsimage
-	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/wifi;
+$(BUILD_BASE)/espfs_img.o: html/ html/wifi/ html/text/ espfs/mkespfsimage/mkespfsimage
+	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/wifi; mkdir html_compressed/text;
 	$(Q) cp -r html/*.ico html_compressed;
 	$(Q) cp -r html/*.css html_compressed;
 	$(Q) cp -r html/*.js html_compressed;
@@ -441,6 +442,10 @@ ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	  $(HTML_PATH)*.html
 	$(Q) java -jar tools/$(HTML_COMPRESSOR) \
 	  -t html --remove-surrounding-spaces max --remove-quotes --remove-intertag-spaces \
+	  -o $(abspath ./html_compressed)/text/ \
+	  $(TEXT_PATH)*.html
+	$(Q) java -jar tools/$(HTML_COMPRESSOR) \
+	  -t html --remove-surrounding-spaces max --remove-quotes --remove-intertag-spaces \
 	  -o $(abspath ./html_compressed)/wifi/ \
 	  $(WIFI_PATH)*.html
 	$(Q) echo "Compressing assets with yui-compressor. This may take a while..."
@@ -453,6 +458,7 @@ ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 else
 	$(Q) cp -r html/head- html_compressed;
 	$(Q) cp -r html/*.html html_compressed;
+	$(Q) cp -r html/text/*.html html_compressed/text;	
 	$(Q) cp -r html/wifi/*.html html_compressed/wifi;	
 endif
 ifeq (,$(findstring mqtt,$(MODULES)))

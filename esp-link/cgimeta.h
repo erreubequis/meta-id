@@ -5,6 +5,7 @@
 
 int cgiMetaWav(HttpdConnData *connData);
 int cgiMetaGpio(HttpdConnData *connData);
+int cgiMetaGetSignal(HttpdConnData *connData);
 void ICACHE_FLASH_ATTR cgiMetaInit();
 
 extern char* rst_codes[7];

@@ -18,7 +18,7 @@ function changeMetaNOTUSED(e) {
   }, function (s, st) {
     showWarning("Error: " + st);
     removeClass(cb, 'pure-button-disabled');
-    window.setTimeout(fetchmeta, 100);
+    window.setTimeout(fetchMeta, 100);
   });
 }
 
@@ -69,6 +69,7 @@ function toggle(el){
 }
 	
 function fetchMeta() {
+	console.log("fetchMeta !");
   ajaxJson("GET", "/meta/gpio", displayMeta, function () {
     window.setTimeout(fetchMeta, 1000);
   });
@@ -81,7 +82,7 @@ function changeMetaStatus(e) {
     showNotification("meta status settings updated");
   }, function (s, st) {
     showWarning("Error: " + st);
-    window.setTimeout(fetchmeta, 100);
+    window.setTimeout(fetchMeta, 100);
   });
 }
 
@@ -89,9 +90,9 @@ function setMeta(name, v) {
   ajaxSpin("POST", "/meta/gpio?num=" + name+"&v=" + v, function () {
     var n = name.replace("-enable", "");
     showNotification(n + " is now " + (v ? "enabled" : "disabled"));
-    window.setTimeout(fetchmeta, 100);
+    window.setTimeout(fetchMeta, 100);
   }, function () {
     showWarning("Enable/disable failed");
-    window.setTimeout(fetchmeta, 100);
+    window.setTimeout(fetchMeta, 100);
   });
 }

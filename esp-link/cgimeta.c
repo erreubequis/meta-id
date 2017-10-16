@@ -15,19 +15,32 @@
 #include "config.h"
 #include "sntp.h"
 #include "cgimqtt.h"
+#include "cgiwifi.h"
+#include "web-server.h"
 #ifdef SYSLOG
 #include "syslog.h"
 #endif
 #define DBG(format, ...) do { os_printf(format, ## __VA_ARGS__); } while(0)
 
 // todo : typedef MetaLimen
-char MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
+short MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
 
 void ICACHE_FLASH_ATTR cgiMetaInit() {
   for (int i=0; i<16; i++) {
 	MetaLimen[i] = 0;
 	}
 }
+
+int ICACHE_FLASH_ATTR cgiMetaGetSignal(HttpdConnData *connData) {
+  char buff[1024];
+  int len;
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+  len = os_sprintf(buff, "{ \"signal\":%d}",	wifiSignalStrength(-1));
+  jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
+  return HTTPD_CGI_DONE;
+}
+
 
 int ICACHE_FLASH_ATTR cgiMetaGetGpio(HttpdConnData *connData) {
   char buff[1024];
@@ -44,7 +57,6 @@ int ICACHE_FLASH_ATTR cgiMetaGetGpio(HttpdConnData *connData) {
 		MetaLimen[15] = GPIO_INPUT_GET(GPIO_ID_PIN(15))+1;
 	}
 	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d ",15,MetaLimen[15]);
-
 	len += os_sprintf(buff+len,"}");
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
@@ -80,6 +92,7 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
 		httpdSend(connData, buff, len);
 		return HTTPD_CGI_DONE;
 	}
+  DBG("META: setting gpio |%d| to |%d| - old : %d\n",num,out, MetaLimen[num]);
 	if(MetaLimen[num]==0){
 		switch(num){
 			case 0:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO0); break;
@@ -102,6 +115,7 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
 				len = os_sprintf(buff, "ko: unhandled number %d ",num);
 				jsonHeader(connData, 200);
 				httpdSend(connData, buff, len);
+				DBG("META: KO for |%d| to |%d| - old : %d\n",num,out, MetaLimen[num]);
 				return HTTPD_CGI_DONE;
 		}
 	}
@@ -110,6 +124,7 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
   if(out == -1){
 	GPIO_OUTPUT_SET(GPIO_ID_PIN(num), 1); 
 	PIN_PULLUP_EN(PERIPHS_IO_MUX_MTDI_U); 
+	MetaLimen[num] = -1;
 	  }
   if(out == -2){
 	GPIO_OUTPUT_SET(GPIO_ID_PIN(num), 0); 
@@ -120,6 +135,7 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
 	  }
    MetaLimen[num]=out;
 
+  DBG("META: ok for |%d| to |%d| - old : %d\n",num,out, MetaLimen[num]);
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
   return HTTPD_CGI_DONE;

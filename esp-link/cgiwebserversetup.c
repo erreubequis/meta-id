@@ -187,3 +187,15 @@ int ICACHE_FLASH_ATTR cgiWebServerSetupUpload(HttpdConnData *connData)
   
   return multipartProcess(webServerContext, connData);
 }
+
+int ICACHE_FLASH_ATTR cgiWebServerList( HttpdConnData *connData){
+  char buff[1024];
+  if (connData->conn == NULL) return HTTPD_CGI_DONE; // Connection aborted. Clean up.
+  noCacheHeaders(connData, 200);
+  httpdHeader(connData, "Content-Type", "application/json");
+  httpdEndHeaders(connData);
+  os_sprintf(buff,
+    "[ %s ]",WEB_UserPages()+2);
+  httpdSend(connData, buff, -1);
+  return HTTPD_CGI_DONE;
+}

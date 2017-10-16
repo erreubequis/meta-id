@@ -1,4 +1,3 @@
-export SDK_BASE=/home/ikujam/share/project/mazon/limen2/esphttpd/esp-link/esp-open-sdk
-export XTENSA_TOOLS_ROOT=/home/ikujam/share/project/mazon/limen2/esphttpd/esp-link/../esp-open-sdk/xtensa-lx106-elf/bin/
+export SDK_BASE=/home/ikujam/share/project/meta/esp-link/esp-open-sdk
+export XTENSA_TOOLS_ROOT=/home/ikujam/share/project/meta/esp-open-sdk/xtensa-lx106-elf/bin/
 export PATH=$PATH:$XTENSA_TOOLS_ROOT
-

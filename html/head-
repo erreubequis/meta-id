@@ -4,11 +4,10 @@
 <!--  <link rel="stylesheet" href="/pure.css">
   <link rel="stylesheet" href="/style.css">-->
   <link rel="stylesheet" href="/meta.css">
+  <link rel="stylesheet" href="/extra.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/meta-ui.js"></script>
 </head>
 <body>
-<div id="spinner" class="spinner" hidden></div>
-<div id="notification" class="spinner" hidden></div>
-<div id="warning" class="spinner" hidden></div>
 <div id="layout">

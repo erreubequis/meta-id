@@ -72,6 +72,7 @@ HttpdBuiltInUrl builtInUrls[] = {
   { "/", cgiRedirect, "/meta.html" },
   { "/meta.wav", cgiMetaWav, NULL },
   { "/meta/gpio", cgiMetaGpio, NULL },
+  { "/meta/signal", cgiMetaGetSignal, NULL },
   { "/menu", cgiMenu, NULL },
   { "/flash/next", cgiGetFirmwareNext, NULL },
   { "/flash/upload", cgiUploadFirmware, NULL },
@@ -116,6 +117,7 @@ HttpdBuiltInUrl builtInUrls[] = {
 #endif
 #ifdef WEBSERVER
   { "/web-server/upload", cgiWebServerSetupUpload, NULL },
+  { "/web-server/list", cgiWebServerList, NULL },
   { "*.json", WEB_CgiJsonHook, NULL }, //Catch-all cgi JSON queries
 #endif
   { "*", cgiEspFsHook, NULL }, //Catch-all cgi function for the filesystem
