@@ -1,6 +1,6 @@
-// Copyright (c) 2015 by Thorsten von Eicken, see LICENSE.txt in the esp-link repo
+// Copyright (c) 2015 by Thorsten von Eicken, see LICENSE.txt in the meta-id repo
 
-// Some code moved to esp-link/pgmshared.c to avoid code duplication.
+// Some code moved to meta-id/pgmshared.c to avoid code duplication.
 // Those changes are Copyright (c) 2017 by Danny Backx.
 
 // Protocol used : https://github.com/Optiboot/optiboot/wiki/HowOptibootWorks

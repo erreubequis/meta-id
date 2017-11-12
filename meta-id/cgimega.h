@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 by Danny Backx, see LICENSE.txt in the esp-link repo
+// Copyright (c) 2016-2017 by Danny Backx, see LICENSE.txt in the meta-id repo
 
 #ifndef CGIMEGA_H
 #define CGIMEGA_H

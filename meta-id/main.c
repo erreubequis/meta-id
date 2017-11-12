@@ -163,7 +163,7 @@ user_rf_cal_sector_set(void) {
   return sect;
 }
 
-// Main routine to initialize esp-link.
+// Main routine to initialize meta-id.
 void ICACHE_FLASH_ATTR
 user_init(void) {
   system_timer_reinit();

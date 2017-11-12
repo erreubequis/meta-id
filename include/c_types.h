@@ -3,7 +3,7 @@
  *
  */
 
-// Modified for esp-link to confiorm with c99 using the patch included with
+// Modified for meta-id to confiorm with c99 using the patch included with
 // esp-open-sdk https://github.com/pfalcon/esp-open-sdk/blob/master/c_types-c99.patch
 // This is included here because otherwise there is a discrepancy between users that use
 // the original Espressif SDK vs ones who want to use the SDK included with esp-open-sdk.

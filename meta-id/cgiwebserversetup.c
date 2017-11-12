@@ -1,4 +1,4 @@
-// Copyright (c) 2015 by Thorsten von Eicken, see LICENSE.txt in the esp-link repo
+// Copyright (c) 2015 by Thorsten von Eicken, see LICENSE.txt in the meta-id repo
 
 #include <esp8266.h>
 #include <osapi.h>
@@ -14,7 +14,7 @@ int upload_position = 0;  // flash offset where to store page upload
 int html_header_len = 0;  // length of the HTML header added to the file
 
 // this is the header to add if user uploads HTML file
-const char * HTML_HEADER =   "<!doctype html><html><head><title>esp-link</title>"
+const char * HTML_HEADER =   "<!doctype html><html><head><title>meta-id</title>"
                              "<link rel=stylesheet href=\"/pure.css\"><link rel=stylesheet href=\"/style.css\">"
                              "<meta name=viewport content=\"width=device-width, initial-scale=1\"><script src=\"/ui.js\">"
                              "</script><script src=\"/userpage.js\"></script></head><body><div id=layout>    ";

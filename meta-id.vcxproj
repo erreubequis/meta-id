@@ -13,20 +13,20 @@
   <ItemGroup>
     <ClCompile Include="cmd\cmd.c" />
     <ClCompile Include="cmd\handlers.c" />
-    <ClCompile Include="esp-link\cgi.c" />
-    <ClCompile Include="esp-link\cgiflash.c" />
-    <ClCompile Include="esp-link\cgimqtt.c" />
-    <ClCompile Include="esp-link\cgioptiboot.c" />
-    <ClCompile Include="esp-link\cgipins.c" />
-    <ClCompile Include="esp-link\cgiservices.c" />
-    <ClCompile Include="esp-link\cgitcp.c" />
-    <ClCompile Include="esp-link\cgiwifi.c" />
-    <ClCompile Include="esp-link\config.c" />
-    <ClCompile Include="esp-link\log.c" />
-    <ClCompile Include="esp-link\main.c" />
-    <ClCompile Include="esp-link\mqtt_client.c" />
-    <ClCompile Include="esp-link\status.c" />
-    <ClCompile Include="esp-link\task.c" />
+    <ClCompile Include="meta-id\cgi.c" />
+    <ClCompile Include="meta-id\cgiflash.c" />
+    <ClCompile Include="meta-id\cgimqtt.c" />
+    <ClCompile Include="meta-id\cgioptiboot.c" />
+    <ClCompile Include="meta-id\cgipins.c" />
+    <ClCompile Include="meta-id\cgiservices.c" />
+    <ClCompile Include="meta-id\cgitcp.c" />
+    <ClCompile Include="meta-id\cgiwifi.c" />
+    <ClCompile Include="meta-id\config.c" />
+    <ClCompile Include="meta-id\log.c" />
+    <ClCompile Include="meta-id\main.c" />
+    <ClCompile Include="meta-id\mqtt_client.c" />
+    <ClCompile Include="meta-id\status.c" />
+    <ClCompile Include="meta-id\task.c" />
     <ClCompile Include="espfs\espfs.c" />
     <ClCompile Include="espfs\mkespfsimage\main.c" />
     <ClCompile Include="espfs\mkespfsimage\mman-win32\mman.c" />
@@ -51,20 +51,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmd\cmd.h" />
-    <ClInclude Include="esp-link\cgi.h" />
-    <ClInclude Include="esp-link\cgiflash.h" />
-    <ClInclude Include="esp-link\cgimqtt.h" />
-    <ClInclude Include="esp-link\cgioptiboot.h" />
-    <ClInclude Include="esp-link\cgipins.h" />
-    <ClInclude Include="esp-link\cgiservices.h" />
-    <ClInclude Include="esp-link\cgitcp.h" />
-    <ClInclude Include="esp-link\cgiwifi.h" />
-    <ClInclude Include="esp-link\config.h" />
-    <ClInclude Include="esp-link\log.h" />
-    <ClInclude Include="esp-link\mqtt_client.h" />
-    <ClInclude Include="esp-link\status.h" />
-    <ClInclude Include="esp-link\stk500.h" />
-    <ClInclude Include="esp-link\task.h" />
+    <ClInclude Include="meta-id\cgi.h" />
+    <ClInclude Include="meta-id\cgiflash.h" />
+    <ClInclude Include="meta-id\cgimqtt.h" />
+    <ClInclude Include="meta-id\cgioptiboot.h" />
+    <ClInclude Include="meta-id\cgipins.h" />
+    <ClInclude Include="meta-id\cgiservices.h" />
+    <ClInclude Include="meta-id\cgitcp.h" />
+    <ClInclude Include="meta-id\cgiwifi.h" />
+    <ClInclude Include="meta-id\config.h" />
+    <ClInclude Include="meta-id\log.h" />
+    <ClInclude Include="meta-id\mqtt_client.h" />
+    <ClInclude Include="meta-id\status.h" />
+    <ClInclude Include="meta-id\stk500.h" />
+    <ClInclude Include="meta-id\task.h" />
     <ClInclude Include="espfs\espfs.h" />
     <ClInclude Include="espfs\espfsformat.h" />
     <ClInclude Include="espfs\mkespfsimage\mman-win32\mman.h" />
@@ -123,7 +123,7 @@
     <None Include="WINDOWS.md" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="esp-link.log" />
+    <Text Include="meta-id.log" />
     <Text Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -148,7 +148,7 @@
   <PropertyGroup>
     <NMakeOutput />
     <NMakePreprocessorDefinitions>__ets__;_STDINT_H;ICACHE_FLASH;__MINGW32__;__WIN32__;MQTT;REST;SYSLOG;FIRMWARE_SIZE</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>.\syslog;.\rest;.\esp-link;.\mqtt;.\cmd;.\serial;.\user;.\espfs;.\httpd;.\include;..\esp_iot_sdk_v1.5.2\include;..\xtensa-lx106-elf\xtensa-lx106-elf\include;c:\tools\mingw64\x86_64-w64-mingw32\include;c:\tools\mingw64\lib\gcc\x86_64-w64-mingw32\4.8.3\include</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>.\syslog;.\rest;.\meta-id;.\mqtt;.\cmd;.\serial;.\user;.\espfs;.\httpd;.\include;..\esp_iot_sdk_v1.5.2\include;..\xtensa-lx106-elf\xtensa-lx106-elf\include;c:\tools\mingw64\x86_64-w64-mingw32\include;c:\tools\mingw64\lib\gcc\x86_64-w64-mingw32\4.8.3\include</NMakeIncludeSearchPath>
     <ExecutablePath />
     <ReferencePath />
     <LibraryPath />

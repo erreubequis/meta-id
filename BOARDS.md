@@ -1,7 +1,7 @@
-Boards with esp-link
+Boards with meta-id
 ====================
 
-This readme provides instructions for PCBs that I've made that are designed for esp-link.
+This readme provides instructions for PCBs that I've made that are designed for meta-id.
 Some of the instructions may be helpful to others as well.
 
 esp-bridge
@@ -11,7 +11,7 @@ esp-bridge
 The esp-bridge has an esp-03 modulde, an FTDI connector (with wrong pinout!), a 3-pin power
 and debug connector, and two buttons.
 Next to the buttons it is marked "TvE2015 esp-ftdi".
-It comes preloaded with the latest version of esp-link.
+It comes preloaded with the latest version of meta-id.
 
 Power: the on-board MCP1825S-33 regulator can provide 500mA and is good from about 3.6v to 6v.
 Connect power either to the 3-pin connector (GND in center, 5v towards the esp module), or to
@@ -52,7 +52,7 @@ jn-esp
 
 The jn-esp has an esp-03 module, an LPC824, a pseudo-FTDI connector (marked in tiny letters)
 and a JeePort (also marked). On the bottom it is marked "JN-ESP-V2".
-It comes preloaded with the latest version of esp-link.
+It comes preloaded with the latest version of meta-id.
 
 Power: the on-board MCP1825S-33 regulator can provide 500mA and is good from about 3.6v to 6v.
 Connect power to the FTDI connector (GND and 5V marked on bottom).
@@ -117,7 +117,7 @@ Wifi-link-12
 
 The wifi-link has an esp-12 modulde, an FTDI connector, and a 2-pin power connector.
 The underside is marked "Wifi-link-12-v2 Jeelabs TvE2015".
-It comes preloaded with the latest version of esp-link V2.
+It comes preloaded with the latest version of meta-id V2.
 
 The ftdi connector has the following pin-out:
  - 1: GND (marked top&bottom)
@@ -146,14 +146,14 @@ port straight, i.e. the component side of the JeeNode and of the wifi-link will 
 To connect an arduino, jumper gnd, tx, rx, and dtr for reset. The wifi-link-12-v2 has a 2.2K resistor on rx (serial going from AVR to esp) in order to protect it from 5v signals.
 
 To program the JeeNode or AVR, having set-up the Wifi through the web pages, run avrdude with an
-option like "-Pnet:esp-link:23" (you can use an IP address instead of `esp-link`). My test command
+option like "-Pnet:meta-id:23" (you can use an IP address instead of `meta-id`). My test command
 line is as follows:
 ```
 /home/arduino/arduino-1.0.5/hardware/tools/avrdude \
   -C /home/arduino/arduino-1.0.5/hardware/tools/avrdude.conf -DV -patmega328p \
-  -Pnet:esp-link:23 -carduino -b115200 -U flash:w:greenhouse.hex:i
+  -Pnet:meta-id:23 -carduino -b115200 -U flash:w:greenhouse.hex:i
 ```
-If you're using "edam's Arduino makefile" then you can simply set `SERIALDEV=net:esp-link:23` in your
+If you're using "edam's Arduino makefile" then you can simply set `SERIALDEV=net:meta-id:23` in your
 sketch's Makefile. You can also use port 2323 which forces programming mode (no real benefit with avrdude, but can
 enable programming PICs).
 
@@ -166,7 +166,7 @@ If you cannot reflash over-the-air and need to reflash serially, follow this pro
   the green LED will be on solid when you have contact
 - briefly interrupt the power to reset the esp
 - it will now be in flash mode: the green LED should be off (assuming you release the flash jumper),
-  if you see the green LED come on it has rebooted into esp-link and you need to reset it again
+  if you see the green LED come on it has rebooted into meta-id and you need to reset it again
   (the whole proess take some fiddling, you can solder a real jumper or switch to the flash pads and there's a similar
   reset jumper pad on the bottom of the PCB).
 - use your favorite programming tool to reflash, you have time if the esp really entered programming mode, it often takes me
@@ -175,7 +175,7 @@ If you cannot reflash over-the-air and need to reflash serially, follow this pro
 Serial flashing
 ---------------
 
-Once you have a version of esp-link flashed to your module or if you received a pre-flashed
+Once you have a version of meta-id flashed to your module or if you received a pre-flashed
 module from me you should not need this section. But sometimes things fail badly and your
 module is "brocked", this is how you receover.
 
@@ -197,9 +197,9 @@ If you're a little python challenged (like I am) then the following install inst
         cd ..
         esptool.py -h
 
-### Flashing esp-link
+### Flashing meta-id
 
-Using esptool.py a esp-link release can be flashed as follows:
+Using esptool.py a meta-id release can be flashed as follows:
 ```
 curl -L https://github.com/jeelabs/esp-link/releases/download/0.10.1/esp-link.tgz | tar xzf -
 cd esp-link

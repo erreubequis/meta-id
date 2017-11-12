@@ -1,11 +1,11 @@
 /*
- * STK500v2 implementation for esp-link
+ * STK500v2 implementation for meta-id
  * Copyright (c) 2016-2017 by Danny Backx
  *
- * based on the framework for "optiboot" (STK500 v1 protocol) in esp-link
+ * based on the framework for "optiboot" (STK500 v1 protocol) in meta-id
  * which is copyright (c) 2015 by Thorsten von Eicken
  *
- * see LICENSE.txt in the esp-link repo
+ * see LICENSE.txt in the meta-id repo
  *
  * Documentation about the protocol used : see http://www.atmel.com/Images/doc2591.pdf
  *

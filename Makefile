@@ -1,7 +1,7 @@
 #
-# Makefile for esp-link - https://github.com/jeelabs/esp-link
+# Makefile for meta-id - https://github.com/jeelabs/meta-id
 #
-# Makefile heavily adapted to esp-link and wireless flashing by Thorsten von Eicken
+# Makefile heavily adapted to meta-id and wireless flashing by Thorsten von Eicken
 # Lots of work, in particular to support windows, by brunnels
 # Original from esphttpd and others...
 #
@@ -15,7 +15,7 @@
 # optional local configuration file
 -include local.conf
 
-# The Wifi station configuration can be hard-coded here, which makes esp-link come up in STA+AP
+# The Wifi station configuration can be hard-coded here, which makes meta-id come up in STA+AP
 # mode trying to connect to the specified AP *only* if the flash wireless settings are empty!
 # This happens on a full serial flash and avoids having to hunt for the AP...
 # STA_SSID ?=
@@ -40,12 +40,12 @@
 # AP_MAX_CONN ?=4
 # AP_BEACON_INTERVAL ?=100
 
-# If CHANGE_TO_STA is set to "yes" the esp-link module will switch to station mode
+# If CHANGE_TO_STA is set to "yes" the meta-id module will switch to station mode
 # once successfully connected to an access point. Else it will stay in STA+AP mode.
 CHANGE_TO_STA ?= no
 
 # hostname or IP address for wifi flashing
-ESP_HOSTNAME  ?= esp-link
+ESP_HOSTNAME  ?= meta-id
 
 # --------------- toolchain configuration ---------------
 
@@ -56,7 +56,7 @@ XTENSA_TOOLS_ROOT ?= $(abspath ../esp-open-sdk/xtensa-lx106-elf/bin)/
 
 # Firmware version 
 # WARNING: if you change this expect to make code adjustments elsewhere, don't expect
-# that esp-link will magically work with a different version of the SDK!!!
+# that meta-id will magically work with a different version of the SDK!!!
 SDK_VERS ?= esp_iot_sdk_v2.1.0
 
 # Try to find the firmware manually extracted, e.g. after downloading from Espressif's BBS,
@@ -100,7 +100,7 @@ LED_CONN_PIN        ?= 0
 # GPIO pin used for "serial activity" LED, active low
 LED_SERIAL_PIN      ?= 14
 
-# --------------- esp-link modules config options ---------------
+# --------------- meta-id modules config options ---------------
 
 # Optional Modules: mqtt rest socket web-server syslog
 MODULES ?= mqtt rest socket web-server syslog
@@ -182,7 +182,7 @@ ET_FF               ?= 80m     # 80Mhz flash speed in esptool flash command
 ET_BLANK            ?= 0x3FE000 # where to flash blank.bin to erase wireless settings
 endif
 
-# --------------- esp-link version        ---------------
+# --------------- meta-id version        ---------------
 
 # Version-fu :-) This code assumes that a new maj.minor is started using a "vN.M.0" tag on master
 # and that thereafter the desired patchlevel number is just the number of commits since the tag.
@@ -238,7 +238,7 @@ endif
 
 # which modules (subdirectories) of the project to include in compiling
 LIBRARIES_DIR 	= libraries
-MODULES		+= espfs httpd user serial cmd esp-link
+MODULES		+= espfs httpd user serial cmd meta-id
 MODULES		+= $(foreach sdir,$(LIBRARIES_DIR),$(wildcard $(sdir)/*))
 EXTRA_INCDIR 	= include .
 
@@ -251,7 +251,7 @@ CFLAGS	+= -Os -ggdb -std=c99 -Werror -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-
 	-D__ets__ -DICACHE_FLASH -Wno-address -DFIRMWARE_SIZE=$(ESP_FLASH_MAX) \
 	-DMCU_RESET_PIN=$(MCU_RESET_PIN) -DMCU_ISP_PIN=$(MCU_ISP_PIN) \
 	-DLED_CONN_PIN=$(LED_CONN_PIN) -DLED_SERIAL_PIN=$(LED_SERIAL_PIN) \
-	-DVERSION="esp-link $(VERSION)"
+	-DVERSION="meta-id $(VERSION)"
 
 # linker flags used to generate the main object file
 LDFLAGS		= -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static -Wl,--gc-sections
@@ -490,18 +490,18 @@ espfs/mkespfsimage/mkespfsimage: espfs/mkespfsimage/
 	$(Q) $(MAKE) -C espfs/mkespfsimage GZIP_COMPRESSION="$(GZIP_COMPRESSION)"
 
 release: all
-	$(Q) rm -rf release; mkdir -p release/esp-link-$(VERSION)
-	$(Q) egrep -a 'esp-link [a-z0-9.]+ - 201' $(FW_BASE)/user1.bin | cut -b 1-80
-	$(Q) egrep -a 'esp-link [a-z0-9.]+ - 201' $(FW_BASE)/user2.bin | cut -b 1-80
+	$(Q) rm -rf release; mkdir -p release/meta-id-$(VERSION)
+	$(Q) egrep -a 'meta-id [a-z0-9.]+ - 201' $(FW_BASE)/user1.bin | cut -b 1-80
+	$(Q) egrep -a 'meta-id [a-z0-9.]+ - 201' $(FW_BASE)/user2.bin | cut -b 1-80
 	$(Q) cp $(FW_BASE)/user1.bin $(FW_BASE)/user2.bin $(SDK_BASE)/bin/blank.bin \
 	       "$(SDK_BASE)/bin/boot_v1.7.bin" "$(SDK_BASE)/bin/esp_init_data_default.bin" \
-	       wiflash avrflash megaflash release/esp-link-$(VERSION)
-	$(Q) tar zcf esp-link-$(VERSION).tgz -C release esp-link-$(VERSION)
-	$(Q) echo "Release file: esp-link-$(VERSION).tgz"
+	       wiflash avrflash megaflash release/meta-id-$(VERSION)
+	$(Q) tar zcf meta-id-$(VERSION).tgz -C release meta-id-$(VERSION)
+	$(Q) echo "Release file: meta-id-$(VERSION).tgz"
 	$(Q) rm -rf release
 
 docker:
-	$(Q) docker build -t jeelabs/esp-link .
+	$(Q) docker build -t jeelabs/meta-id .
 clean:
 	$(Q) rm -f $(APP_AR)
 	$(Q) rm -f $(TARGET_OUT)
@@ -520,7 +520,7 @@ depend:
 
 # Rebuild version at least at every Makefile change
 
-${BUILD_BASE}/esp-link/main.o: Makefile
+${BUILD_BASE}/meta-id/main.o: Makefile
 
 # DO NOT DELETE
 

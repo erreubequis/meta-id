@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# Flash an AVR with optiboot using the esp-link built-in programmer
+# Flash an AVR with optiboot using the meta-id built-in programmer
 # Basically we first reset the AVR and get in sync, and then send the hex file
 #
 # ----------------------------------------------------------------------------
@@ -13,11 +13,11 @@
 show_help() {
   cat <<EOT
 Usage: ${0##*/} [-options...] hostname sketch.hex
-Flash the AVR running optiboot attached to esp-link with the sketch.
+Flash the AVR running optiboot attached to meta-id with the sketch.
   -v                    Be verbose
   -h                    show this help
 
-Example: ${0##*/} -v esp-link mysketch.hex
+Example: ${0##*/} -v meta-id mysketch.hex
          ${0##*/} 192.168.4.1 mysketch.hex
 EOT
 }

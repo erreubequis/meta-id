@@ -15,7 +15,7 @@
               <div class="pure-form-stacked">
                 <label>Syslog Host</label>
                 <input type="text" name="syslog_host" />
-                <div class="popup">Esp-link sends event/debug info to this syslog host 
+                <div class="popup">Meta-id sends event/debug info to this syslog host 
                   (hostname:port). Leave empty to disable syslog.</div>
               </div>
               <div class="pure-form-stacked">
@@ -41,11 +41,11 @@
               </div>
               <div>
                 <input type="checkbox" name="syslog_showtick" />
-                <label>Include esp-link millisecond ticker</label>
+                <label>Include meta-id millisecond ticker</label>
               </div>
               <div>
                 <input type="checkbox" name="syslog_showdate" />
-                <label>Include esp-link datetime</label>
+                <label>Include meta-id datetime</label>
                 <div class="popup">Some syslog servers rotate log if timestamp is in the past so disable to prevent this</div>
               </div>
               <button id="Syslog-button" type="submit" class="pure-button button-primary">
@@ -62,7 +62,7 @@
               <div class="form-horizontal">
                 <input type="checkbox" name="mdns_enable"/>
                 <label>Enable mDNS</label>
-                <div class="popup">Esp-link can advertise its hostname and service name (both
+                <div class="popup">Meta-id can advertise its hostname and service name (both
                   with a .local suffix) via multicast DNS.</div>
               </div>
               <br>
