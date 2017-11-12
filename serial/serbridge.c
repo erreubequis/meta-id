@@ -522,13 +522,13 @@ serbridgeConnectCb(void *arg)
 #ifdef SERBR_DBG
   os_printf("Accept port %d, conn=%p, pool slot %d\n", conn->proto.tcp->local_port, conn, i);
 #endif
-  syslog(SYSLOG_FAC_USER, SYSLOG_PRIO_NOTICE, "esp-link", "Accept port %d, conn=%p, pool slot %d\n",
+  syslog(SYSLOG_FAC_USER, SYSLOG_PRIO_NOTICE, "meta-id", "Accept port %d, conn=%p, pool slot %d\n",
       conn->proto.tcp->local_port, conn, i);
   if (i==MAX_CONN) {
 #ifdef SERBR_DBG
     os_printf("Aiee, conn pool overflow!\n");
 #endif
-    syslog(SYSLOG_FAC_USER, SYSLOG_PRIO_WARNING, "esp-link", "Aiee, conn pool overflow!\n");
+    syslog(SYSLOG_FAC_USER, SYSLOG_PRIO_WARNING, "meta-id", "Aiee, conn pool overflow!\n");
     espconn_disconnect(conn);
     return;
   }

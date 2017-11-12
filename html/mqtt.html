@@ -11,9 +11,9 @@
           The REST support lets the uC initiate simple HTTP requests while the MQTT support
           lets it communicate with an MQTT server bidirectionally at QoS 0 thru 2.</p>
           <p>The MQTT support is in the form of a built-in client that connects to a server
-          using parameters set below and stored in esp-link's flash settings. This allows 
-          esp-link to take care of connection parameters and disconnect/reconnect operations.</p>
-          <p>The MQTT client also supports sending periodic status messages about esp-link itself,
+          using parameters set below and stored in meta-id's flash settings. This allows 
+          meta-id to take care of connection parameters and disconnect/reconnect operations.</p>
+          <p>The MQTT client also supports sending periodic status messages about meta-id itself,
           including WiFi RSSI, and free heap memory.</p>
           <div class="form-horizontal">
             <input type="checkbox" name="slip-enable"/>
@@ -83,6 +83,21 @@
             </form>
           </div>
           <div class="card">
+            <h1>Status reporting
+              <div id="mqtt-test-spinner" class="spinner spinner-small"></div>
+            </h1>
+            <form action="#" id="mqtt-test-form" class="pure-form" hidden>
+              <div class="form-horizontal">
+                <input name="mqtt-test"/>
+                <label>Enable status reporting via MQTT</label>
+              </div>
+              <br>
+              <button id="mqtt-test-button" type="submit" class="pure-button button-primary">
+                Send !
+              </button>
+            </form>
+          </div>
+          <div class="card">
             <h1>REST</h1>
             <p>REST requests are enabled as soon as SLIP is enabled.
             There are no REST-specific settings.</p>
@@ -98,6 +113,7 @@
 onLoad(function() {
   fetchMqtt();
   bnd($("#mqtt-form"), "submit", changeMqtt);
+  bnd($("#mqtt-test-form"), "submit", changeMqttTest);
   bnd($("#mqtt-status-form"), "submit", changeMqttStatus);
 });
 </script>

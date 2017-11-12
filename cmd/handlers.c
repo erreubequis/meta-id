@@ -18,7 +18,7 @@
 #include <socket.h>
 #endif
 #include <ip_addr.h>
-#include "esp-link/cgi.h"
+#include "meta-id/cgi.h"
 
 #include "config.h"
 
@@ -378,7 +378,7 @@ static void ICACHE_FLASH_ATTR cmdWifiQuerySSID(CmdPacket *cmd) {
 
 // Start scanning, API interface
 static void ICACHE_FLASH_ATTR cmdWifiStartScan(CmdPacket *cmd) {
-  // call a function that belongs in esp-link/cgiwifi.c due to variable access
+  // call a function that belongs in meta-id/cgiwifi.c due to variable access
   wifiStartScan();
 }
 

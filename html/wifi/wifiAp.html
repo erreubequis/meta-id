@@ -1,4 +1,14 @@
-  <div id="main">
+<div id=menu>
+	<ul>
+		<li>Wifi AP</li>
+		<li><a href="/meta.html">Meta</a></li>
+		<li><a href="/text/text.html">Text</a></li>
+		<li><a href="/wifi/wifiSta.html">Wifi Client</a></li>
+		<li><a href="/web-server.html">Upload</a></li>
+	</ul>
+</div>
+<div class="square-box">
+<div class="square-content">
     <div class="header">
       <h1>WiFi Soft-AP Configuration</h1>
     </div>
@@ -8,7 +18,10 @@
         <div class="pure-u-1 pure-u-md-1-2">
 	     <div class="card">
           <h1>Soft-AP State</h1>
-          <div id="wifi-spinner" class="spinner spinner-small">
+          <div id="wifi-spinner" class="spinner">
+<div id="spinner" class="spinner" hidden></div>
+<div id="notification" class="spinner" hidden></div>
+<div id="warning" class="spinner" hidden></div>
           </div>
           <table id="wifi-table" class="pure-table pure-table-horizontal" hidden><tbody>
           <tr><td>WiFi mode</td><td id="wifi-mode"></td></tr>
@@ -28,7 +41,7 @@
 	      
 	      <div class="card">
             <h1>Soft-AP Settings</h1>
-            <div id="AP_Settings-spinner" class="spinner spinner-small"></div>
+            <div id="AP_Settings-spinner" class="spinner"></div>
             
             <form action="#" id="AP_Settings-form" class="pure-form" hidden>
               <legend>Soft-AP main settings, use with care!</legend>
@@ -79,11 +92,14 @@
               </button>
 
             </form>
+			<br/><br/>
           </div>
         </div><!-- pure-u-1 -->
       </div><!-- pure-g -->
     </div><!-- content -->
   </div><!-- main -->
+</div><!-- layout -->
+</div><!-- layout -->
 </div><!-- layout -->
 
 <script type="text/javascript">

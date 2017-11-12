@@ -31,7 +31,7 @@
           </div>
           <div class="card">
             <h1>Info</h1>
-            <p style="margin-bottom:0;">The JeeLabs esp-link firmware bridges the ESP8266
+            <p style="margin-bottom:0;">The JeeLabs meta-id firmware bridges the ESP8266
             serial port to WiFi and can
             program microcontrollers over the serial port, in particular Arduinos, AVRs, and
             NXP's LPC800 and other ARM processors. Typical avrdude command line to
@@ -39,15 +39,15 @@
             <div class="tt" style="font-size:100%;">
               /home/arduino/hardware/tools/avrdude&nbsp;\<br>
               &nbsp;&nbsp;-DV -patmega328p \<br>
-              &nbsp;&nbsp;-Pnet:esp-link.local:23 \<br>
+              &nbsp;&nbsp;-Pnet:meta-id.local:23 \<br>
               &nbsp;&nbsp;-carduino -b115200 \<br>
               &nbsp;&nbsp;-U flash:w:my_sketch.hex:i\<br>
               &nbsp;&nbsp;-C /home/arduino/hardware/tools/avrdude.conf
             </div>
-            <p>where <tt>-Pnet:esp-link.local:23</tt> tells avrdude to connect to port 23 of esp-link.
-            You can substitute the IP address of your esp-link for esp-link.local if necessary.
+            <p>where <tt>-Pnet:meta-id.local:23</tt> tells avrdude to connect to port 23 of meta-id.
+            You can substitute the IP address of your meta-id for meta-id.local if necessary.
             Please refer to
-            <a href="https://github.com/jeelabs/esp-link/blob/master/README.md">the online README</a>
+            <a href="https://github.com/jeelabs/meta-id/blob/master/README.md">the online README</a>
             for up-to-date help.</p>
           </div>
         </div>
@@ -134,7 +134,7 @@
                 <div class="click-to-edit system-description">
                   <span class="edit-off" style="display:block; width:auto;"></span>
                   <textarea class="edit-on" rows=3 maxlength=127 hidden> </textarea>
-                  <div class="popup">Click to edit!<br>A short description or memo for this esp-link
+                  <div class="popup">Click to edit!<br>A short description or memo for this meta-id
                     module, 128 chars max</div>
                 </div>
             </td></tr>

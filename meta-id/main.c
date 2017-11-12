@@ -20,6 +20,7 @@
 #include "cgiflash.h"
 #include "cgioptiboot.h"
 #include "cgimega.h"
+#include "cgimeta.h"
 #include "cgiwebserversetup.h"
 #include "auth.h"
 #include "espfs.h"
@@ -68,7 +69,10 @@ general ones. Authorization things (like authBasic) act as a 'barrier' and
 should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
-  { "/", cgiRedirect, "/home.html" },
+  { "/", cgiRedirect, "/meta.html" },
+  { "/meta.wav", cgiMetaWav, NULL },
+  { "/meta/gpio", cgiMetaGpio, NULL },
+  { "/meta/signal", cgiMetaGetSignal, NULL },
   { "/menu", cgiMenu, NULL },
   { "/flash/next", cgiGetFirmwareNext, NULL },
   { "/flash/upload", cgiUploadFirmware, NULL },
@@ -113,6 +117,7 @@ HttpdBuiltInUrl builtInUrls[] = {
 #endif
 #ifdef WEBSERVER
   { "/web-server/upload", cgiWebServerSetupUpload, NULL },
+  { "/web-server/list", cgiWebServerList, NULL },
   { "*.json", WEB_CgiJsonHook, NULL }, //Catch-all cgi JSON queries
 #endif
   { "*", cgiEspFsHook, NULL }, //Catch-all cgi function for the filesystem
@@ -158,7 +163,7 @@ user_rf_cal_sector_set(void) {
   return sect;
 }
 
-// Main routine to initialize esp-link.
+// Main routine to initialize meta-id.
 void ICACHE_FLASH_ATTR
 user_init(void) {
   // uncomment the following three lines to see flash config messages for troubleshooting
@@ -182,6 +187,8 @@ user_init(void) {
   // Status LEDs
   statusInit();
   serledInit();
+  cgiMetaInit();
+
   // Wifi
   wifiInit();
   // init the flash filesystem with the html stuff

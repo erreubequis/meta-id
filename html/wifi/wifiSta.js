@@ -114,7 +114,7 @@ function getStatus() {
         showWifiInfo(data);
         blockScan = 0;
         if (data.modechange == "yes") {
-          var txt2 = "esp-link will switch to STA-only mode in a few seconds";
+          var txt2 = "meta-id will switch to STA-only mode in a few seconds";
           window.setTimeout(function() { showNotification(txt2); }, 4000);
         }
         $("#reconnect").removeAttribute("hidden");

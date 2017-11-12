@@ -1,4 +1,4 @@
-Flashing esp-link
+Flashing meta-id
 =================
 
 ### Hardware configuration for normal operation
@@ -23,9 +23,9 @@ The recommended connections for an esp-12 module are:
   resistor to 3.3V (indicates serial activity)
 
 At boot time the esp8266 ROM outputs a boot message on UTXD, this can cause problems to the attached
-microcontroller. If you need to avoid this, you can configure esp-link to swap the uart pins.
+microcontroller. If you need to avoid this, you can configure meta-id to swap the uart pins.
 You should then connect the esp-12 module as follows and choose the "swap_uart" pin assignment
-in the esp-link web interface:
+in the meta-id web interface:
 
 - GPIO13: connect to TX of microcontroller
 - GPIO15: connect to RX of microcontroller and use a pull-down to ensure proper booting
@@ -48,7 +48,7 @@ To flash firmware onto the esp8266 via the serial port the following must be obs
 
 ### Initial serial flashing
 
-Download the latest [release](https://github.com/jeelabs/esp-link/releases) or use the
+Download the latest [release](https://github.com/jeelabs/meta-id/releases) or use the
 `user1.bin` file that is produced by the build process.
 You will need to flash the bootloader, the `user1.bin` firmware, blank wifi settings, and init data
 as described below.
@@ -76,9 +76,9 @@ On Linux using esptool.py this turns into the following for a 32mbit=4MByte flas
 such as an esp-12 module typically has (_substitute the appropriate release number and bootloader
 version number_):
 ```
-curl -L https://github.com/jeelabs/esp-link/releases/download/v2.2.3/esp-link-v2.2.3.tgz | \
+curl -L https://github.com/jeelabs/meta-id/releases/download/v2.2.3/meta-id-v2.2.3.tgz | \
     tar xzf -
-cd esp-link-v2.2.3
+cd meta-id-v2.2.3
 esptool.py --port /dev/ttyUSB0 --baud 230400 write_flash -fs 32m -ff 80m \
     0x00000 boot_v1.5.bin 0x1000 user1.bin \
     0x3FC000 esp_init_data_default.bin 0x3FE000 blank.bin
@@ -87,9 +87,9 @@ I use a high baud rate as shown above because I'm impatient, but that's not requ
 
 ### 4Mbit / 512Kbyte module
 ```
-curl -L https://github.com/jeelabs/esp-link/releases/download/v2.2.3/esp-link-v2.2.3.tgz | \
+curl -L https://github.com/jeelabs/meta-id/releases/download/v2.2.3/meta-id-v2.2.3.tgz | \
     tar xzf -
-cd esp-link-v2.2.3
+cd meta-id-v2.2.3
 esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash -fs 4m -ff 40m \
     0x00000 boot_v1.5.bin 0x1000 user1.bin \
     0x7C000 esp_init_data_default.bin 0x7E000 blank.bin
@@ -117,7 +117,7 @@ ESP_HOSTNAME=192.168.1.5 make wiflash
 ```
 or assuming mDNS is working:
 ```
-ESP_HOSTNAME=esp-link.local make wiflash
+ESP_HOSTNAME=meta-id.local make wiflash
 ```
 or using wiflash.sh:
 ```
@@ -181,7 +181,7 @@ running install
 Finished processing dependencies for esptool==0.1.0
 ```
 
-Download and unzip the latest esp-link release package, and start a commandline
+Download and unzip the latest meta-id release package, and start a commandline
 in that directory. The command to run is pretty much the same as for linux.
 Adjust the path to esptool and the COM port if you don't have the ESP on COM12. 460800
 baud worked just fine for me, writing at ~260kbit/s instead of ~80kbit/s.

@@ -11,7 +11,7 @@
 #define DBG(format, ...) do { } while(0)
 #endif
 
-MQTT_Client mqttClient; // main mqtt client used by esp-link
+MQTT_Client mqttClient; // main mqtt client used by meta-id
 
 static MqttCallback connected_cb;
 static MqttCallback disconnected_cb;
