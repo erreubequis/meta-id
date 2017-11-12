@@ -19,3 +19,4 @@ local.conf
 *.tgz
 esp-open-sdk/
 *~
+envvars

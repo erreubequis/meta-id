@@ -1,9 +1,15 @@
-ESP-LINK: Wifi-Serial Bridge w/REST&MQTT
+META-ID: Wifi-Serial Bridge w/REST&MQTT
 ========================================
 
-<img src="https://cloud.githubusercontent.com/assets/39480/19333951/73fcdcbe-90ad-11e6-8572-5e654377275a.png">
+http://www.meta-id.info/
 
-The esp-link firmware connects a micro-controller to the internet using an ESP8266 Wifi module.
+The meta-id firmware connects a micro-controller to the internet using an ESP8266 Wifi module.
+
+it is based on the awesome esp-link firmware from jeelabs : https://github.com/jeelabs/esp-link
+
+THIS PROJECT IS WORK IN PROGRESS
+================================
+
 It implements a number of features:
 
 - transparent bridge between Wifi and serial, useful for debugging or inputting into a uC
