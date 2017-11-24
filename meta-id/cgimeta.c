@@ -156,7 +156,129 @@ int ICACHE_FLASH_ATTR cgiMetaGpio(HttpdConnData *connData) {
   }
 }
 
+
+int genSound(int* pos, char header[],int len){
+    int i;
+    int j;
+    DBG("META : generating sound %d\n",*pos);
+	if(*pos > 1024) 
+		return 0;
+	for (i = 0, j = *pos  * 1024; i < len; i += 2, j++ ){
+        short datum1 = 450 * ((j >> 9 | j >> 7 | j >> 2) % 128);
+        short datum2 = 450 * ((j >> 11 | j >> 8 | j >> 3) % 128);
+        header[i]     = datum1; // One channel.
+        header[i + 1] = datum2; // Another channel.
+    }
+    *pos=*pos+1;
+	return 1024;
+}
+
+int genHeader(char header[],int len){
+/******************************
+*  Magic file format strings. *
+******************************/
+const char fChunkID[]     = {'R', 'I', 'F', 'F'};
+const char fFormat[]      = {'W', 'A', 'V', 'E'};
+const char fSubchunk1ID[] = {'f', 'm', 't', ' '};
+const char fSubchunk2ID[] = {'d', 'a', 't', 'a'};
+
+/********************************
+* WriteWavePCM() configuration: *
+* - 2 channels,                 *
+* - frequency 44100 Hz.         *
+********************************/
+const unsigned short N_CHANNELS = 2;
+const unsigned int SAMPLE_RATE = 44100;
+const unsigned short BITS_PER_BYTE = 8;
+const unsigned int N_SAMPLE_PAIRS = 1048576;
+
+    const static unsigned int fSubchunk1Size = 16;
+    const static unsigned short fAudioFormat = 1;
+    const static unsigned short fBitsPerSample = 16;
+
+    unsigned int fByteRate = SAMPLE_RATE * N_CHANNELS *
+                             fBitsPerSample / BITS_PER_BYTE;
+
+    unsigned short fBlockAlign = N_CHANNELS * fBitsPerSample / BITS_PER_BYTE;
+    unsigned int fSubchunk2Size;
+    unsigned int fChunkSize;
+
+    //char header[46];
+	memset(header,0,46);
+
+    fSubchunk2Size =  N_SAMPLE_PAIRS * N_CHANNELS *2*sizeof(short);
+    fChunkSize = 46 + fSubchunk2Size;
+    DBG("META : generating header 1\n");
+	memcpy(header,&fChunkID,4);
+	memcpy(header+4,&fChunkSize,4);
+	memcpy(header+8,&fFormat,4);
+    DBG("META : generating header 2\n");
+
+	memcpy(header+12,&fSubchunk1ID,4);
+	memcpy(header+16,&fSubchunk1Size,4);
+	memcpy(header+20,&fAudioFormat,2);
+	memcpy(header+22,&N_CHANNELS,2);
+	memcpy(header+24,&SAMPLE_RATE,4);
+	memcpy(header+28,&fByteRate,4);
+	memcpy(header+32,&fBlockAlign,2);
+	memcpy(header+34,&fBitsPerSample,2);
+
+    DBG("META : generating header 3\n");
+	memcpy(header+36,&fSubchunk2ID,4);
+	memcpy(header+40,&fSubchunk2Size,4);
+	DBG("META : genheader done\n");
+	return 44;
+}
+
+
 int ICACHE_FLASH_ATTR cgiMetaWav(HttpdConnData *connData) {
+	int *pos=connData->cgiData;
+	char buff[1024];
+	int len ;
+	//os_printf("cgiEspFsHook conn=%p conn->conn=%p file=%p\n", connData, connData->conn, file);
+
+	if (connData->conn==NULL) {
+		//Connection aborted. Clean up.
+		return HTTPD_CGI_DONE;
+	}
+
+	if (pos==NULL) {
+		//First call to this cgi
+		pos=os_malloc(sizeof(int));
+		if (pos==NULL) {
+			return HTTPD_CGI_NOTFOUND;
+		}
+		*pos=-1;
+		connData->cgiData=pos;
+		httpdStartResponse(connData, 200);
+//		noCacheHeaders(connData, 200);
+		httpdHeader(connData, "Content-Type", "audio/x-wav");
+		httpdEndHeaders(connData);
+		return HTTPD_CGI_MORE;
+	}
+	if (*pos==-1) {
+		len=genHeader(buff, 1024);
+		if (len>0) {
+			espconn_sent(connData->conn, (uint8 *)buff, len);
+			*pos=0;
+			return HTTPD_CGI_MORE;
+		}
+		else{
+			return HTTPD_CGI_NOTFOUND;
+		}
+	}
+	len=genSound(pos, buff, 1024);
+	if (len>0) espconn_sent(connData->conn, (uint8 *)buff, len);
+	if (len!=1024) {
+		//We're done.
+		os_free(pos);
+		return HTTPD_CGI_DONE;
+	} 
+		//Ok, till next time.
+		return HTTPD_CGI_MORE;
+}
+
+#if 0
 /*
 from https://codereview.stackexchange.com/questions/105272/writing-computer-generated-music-to-a-wav-file-in-c
 * 
@@ -274,3 +396,4 @@ DBG("META : sending data\n");
 //    return true;
 }
 
+#endif

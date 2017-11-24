@@ -153,7 +153,7 @@ void ICACHE_FLASH_ATTR wifiStartMDNS(struct ip_addr ip) {
 
 //WiFi access point data
 typedef struct {
-  char ssid[32];
+  char ssid[33];
   sint8 rssi;
   char enc;
 } ApData;
@@ -212,6 +212,7 @@ void ICACHE_FLASH_ATTR wifiScanDoneCb(void *arg, STATUS status) {
     cgiWifiAps.apData[n]->rssi=bss_link->rssi;
     cgiWifiAps.apData[n]->enc=bss_link->authmode;
     strncpy(cgiWifiAps.apData[n]->ssid, (char*)bss_link->ssid, 32);
+    cgiWifiAps.apData[n]->ssid[32]=0;
     DBG("bss%d: %s (%d)\n", n+1, (char*)bss_link->ssid, bss_link->rssi);
 
     bss_link = bss_link->next.stqe_next;
