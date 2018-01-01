@@ -58,7 +58,7 @@ function scanResult() {
     return scanAPs();
   }
   scanReqCnt += 1;
-  ajaxJson('GET', "scan", function(data) {
+  ajaxJson('GET', "/wifi/scan", function(data) {
       currAp = getSelectedEssid();
       if (data.result.inProgress == "0" && data.result.APs.length > 0) {
         $("#aps").innerHTML = "";
@@ -89,7 +89,7 @@ function scanAPs() {
   }
   scanTimeout = null;
   scanReqCnt = 0;
-  ajaxReq('POST', "scan", function(data) {
+  ajaxReq('POST', "/wifi/scan", function(data) {
     showNotification("Wifi scan started");
     window.setTimeout(scanResult, 1000);
   }, function(s, st) {
@@ -103,7 +103,7 @@ function scanAPs() {
 }
 
 function getStatus() {
-  ajaxJsonSpin("GET", "connstatus", function(data) {
+  ajaxJsonSpin("GET", "/wifi/connstatus", function(data) {
       if (data.status == "idle" || data.status == "connecting") {
         $("#aps").innerHTML = "Connecting...";
         showNotification("Connecting...");
@@ -136,7 +136,7 @@ function getStatus() {
 function changeWifiMode(m) {
   blockScan = 1;
   hideWarning();
-  ajaxSpin("POST", "setmode?mode=" + m, function(resp) {
+  ajaxSpin("POST", "/wifi/setmode?mode=" + m, function(resp) {
     showNotification("Mode changed");
     window.setTimeout(getWifiInfo, 100);
     blockScan = 0;
@@ -154,7 +154,7 @@ function changeWifiAp(e) {
   var passwd = $("#wifi-passwd").value;
   var essid = getSelectedEssid();
   showNotification("Connecting to " + essid);
-  var url = "connect?essid="+encodeURIComponent(essid)+"&passwd="+encodeURIComponent(passwd);
+  var url = "/wifi/connect?essid="+encodeURIComponent(essid)+"&passwd="+encodeURIComponent(passwd);
 
   hideWarning();
   $("#reconnect").setAttribute("hidden", "");
@@ -177,7 +177,7 @@ function changeWifiAp(e) {
 
 function changeSpecial(e) {
   e.preventDefault();
-  var url = "special";
+  var url = "/wifi/special";
   url += "?dhcp=" + document.querySelector('input[name="dhcp"]:checked').value;
   url += "&staticip=" + encodeURIComponent($("#wifi-staticip").value);
   url += "&netmask=" + encodeURIComponent($("#wifi-netmask").value);

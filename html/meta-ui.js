@@ -484,3 +484,86 @@ function setPins(ev) {
     window.setTimeout(fetchPins, 100);
   });
 }
+
+/**
+ * -1 : unknown, waiting for ajax call with config
+ *  0 : ask for config
+ *  1 : connecting
+ *  2 : connected
+ **/
+var curState=-1;
+var lastState=-1;
+var wifiInfo=null;
+
+function loadWifiInfo(data){
+		showWifiInfo(data);
+		wifiInfo=data;
+		if(data != null){
+			if (data.status == "connecting") {
+				curState=1;
+			}
+			else if(data.status == "got IP address"){
+				showWifiInfo(data);
+				curState=2;
+			}
+			else{
+				curState=0;
+			}
+		}
+		stateMachine(); 
+}
+
+function stateMachine () {
+	if(lastState!=curState){
+		for(i=-1;i<3;i++){
+			del=$("#state-"+i);
+			del.setAttribute('hidden','');
+		}
+		del=$("#state-"+curState);
+		del.removeAttribute('hidden');
+	}
+	lastState=curState;
+	
+	ajaxJson('GET', "/wifi/info", loadWifiInfo,
+      function(s, st) { window.setTimeout(stateMachine, 2000); });
+}
+
+
+function resetWifiAp(e) {
+  e.preventDefault();
+  showNotification("Ressetting configuration...");
+  var url = "/wifi/connect?essid=&passwd=";
+  hideWarning();
+  $("#reconnect").setAttribute("hidden", "");
+  $("#wifi-passwd").value = "";
+  var cb = $("#reset-button");
+  var cn = cb.className;
+  cb.className += ' pure-button-disabled';
+  blockScan = 1;
+  ajaxSpin("POST", url, function(resp) {
+      $("#spinner").removeAttribute('hidden'); // hack
+      showNotification("Waiting for network change...");
+      window.scrollTo(0, 0);
+      window.setTimeout(getStatus, 2000);
+    }, function(s, st) {
+      showWarning("Error resetting network: "+st);
+      cb.className = cn;
+      window.setTimeout(scanAPs, 1000);
+    });
+}
+
+/**
+ *  TODO : print status information always visible : +- ok
+ *  TODO : reset/stop ajax button -> config form 
+ * fix 
+ [DOM] Found 2 elements with non-unique id #hidden-ssid: 
+ * (More info: https://goo.gl/9p2vKq) 
+ * <input type=​"text" id=​"hidden-ssid" value style=​"width:​auto;​ display:​inline-block;​ margin-left:​ 0.7em">​ 
+ * <input type=​"hidden" id=​"hidden-ssid" value style=​"width:​auto;​ display:​inline-block;​ margin-left:​ 0.7em">​
+ *  in start.html:1 
+ * 
+ *  TODO : validate connection with dhcp
+ *  TODO : validate connection without dhcp
+ *  TODO : captiveportal
+ **/
+
