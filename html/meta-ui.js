@@ -510,7 +510,7 @@ function loadWifiInfo(data){
 				curState=0;
 			}
 		}
-		stateMachine(); 
+       stateMachine();
 }
 
 function stateMachine () {
@@ -523,7 +523,6 @@ function stateMachine () {
 		del.removeAttribute('hidden');
 	}
 	lastState=curState;
-	
 	ajaxJson('GET', "/wifi/info", loadWifiInfo,
       function(s, st) { window.setTimeout(stateMachine, 2000); });
 }
@@ -550,6 +549,14 @@ function resetWifiAp(e) {
       cb.className = cn;
       window.setTimeout(scanAPs, 1000);
     });
+}
+
+function toggle(el){
+del=$("#"+el);
+if (del.visibility != 'hidden')
+del.visibility = 'hidden';
+else
+del.visibility = 'visible';
 }
 
 /**

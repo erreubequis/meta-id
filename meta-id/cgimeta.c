@@ -163,12 +163,20 @@ int genSound(int* pos, char header[],int len){
     DBG("META : generating sound %d\n",*pos);
 	if(*pos > 1024) 
 		return 0;
-	for (i = 0, j = *pos  * 1024; i < len; i += 2, j++ ){
+/* "stereo"
+ 	for (i = 0, j = *pos  * 1024; i < len; i += 2, j++ ){
         short datum1 = 450 * ((j >> 9 | j >> 7 | j >> 2) % 128);
         short datum2 = 450 * ((j >> 11 | j >> 8 | j >> 3) % 128);
         header[i]     = datum1; // One channel.
         header[i + 1] = datum2; // Another channel.
     }
+    */
+    /* "mono" */
+   	for (i = 0, j = *pos  * 1024; i < len; i ++, j++ ){
+        short datum1 = 450 * ((j >> 9 | j >> 7 | j >> 2) % 128);
+        header[i]     = datum1; // One channel.
+    }
+ 
     *pos=*pos+1;
 	return 1024;
 }
@@ -187,7 +195,7 @@ const char fSubchunk2ID[] = {'d', 'a', 't', 'a'};
 * - 2 channels,                 *
 * - frequency 44100 Hz.         *
 ********************************/
-const unsigned short N_CHANNELS = 2;
+const unsigned short N_CHANNELS = 1;
 const unsigned int SAMPLE_RATE = 44100;
 const unsigned short BITS_PER_BYTE = 8;
 const unsigned int N_SAMPLE_PAIRS = 1048576;
@@ -232,7 +240,7 @@ const unsigned int N_SAMPLE_PAIRS = 1048576;
 
 
 int ICACHE_FLASH_ATTR cgiMetaWav(HttpdConnData *connData) {
-	int *pos=connData->cgiData;
+	int *pos;
 	char buff[1024];
 	int len ;
 	//os_printf("cgiEspFsHook conn=%p conn->conn=%p file=%p\n", connData, connData->conn, file);
@@ -241,7 +249,7 @@ int ICACHE_FLASH_ATTR cgiMetaWav(HttpdConnData *connData) {
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 	}
-
+	pos=connData->cgiData;
 	if (pos==NULL) {
 		//First call to this cgi
 		pos=os_malloc(sizeof(int));
