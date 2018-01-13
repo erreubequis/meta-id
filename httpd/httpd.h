@@ -31,6 +31,7 @@ struct HttpdConnData {
 	void *cgiData;
 	void *cgiPrivData; // Used for streaming handlers storing state between requests
 	void *cgiResponse; // used for forwarding response to the CGI handler
+	uint32_t hash;		// authentication cookie 
 	HttpdPriv *priv;
 	cgiSendCallback cgi;
 	HttpdPostData *post;
@@ -55,6 +56,8 @@ typedef struct {
 } HttpdBuiltInUrl;
 
 int ICACHE_FLASH_ATTR cgiRedirect(HttpdConnData *connData);
+void ICACHE_FLASH_ATTR httpdCookieRedirect(HttpdConnData *conn, char *newUrl, uint32 hash);
+void ICACHE_FLASH_ATTR httpdForbidden(HttpdConnData *conn);
 void ICACHE_FLASH_ATTR httpdRedirect(HttpdConnData *conn, char *newUrl);
 int httpdUrlDecode(char *val, int valLen, char *ret, int retLen);
 int ICACHE_FLASH_ATTR httpdFindArg(char *line, char *arg, char *buff, int buffLen);

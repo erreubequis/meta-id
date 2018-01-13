@@ -1,6 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-
+#define USER_PASS_LENGTH 36
 // Flash configuration settings. When adding new items always add them at the end and formulate
 // them such that a value of zero is an appropriate default or backwards compatible. Existing
 // modules that are upgraded will have zero in the new fields. This ensures that an upgrade does
@@ -41,6 +41,7 @@ typedef struct {
   int8_t   data_bits;
   int8_t   parity;
   int8_t   stop_bits;
+  char     user_pass[USER_PASS_LENGTH];
 } FlashConfig;
 extern FlashConfig flashConfig;
 

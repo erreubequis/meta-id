@@ -69,10 +69,14 @@ general ones. Authorization things (like authBasic) act as a 'barrier' and
 should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
-  { "/", cgiRedirect, "/start.html" },
+  { "/", cgiMetaHome, NULL },
   { "/meta.wav", cgiMetaWav, NULL },
+  { "/meta/userpass", cgiMetaUserPass, NULL },
+  { "/meta/auth", cgiMetaAuth, "/welcome.html" },
   { "/meta/gpio", cgiMetaGpio, NULL },
   { "/meta/signal", cgiMetaGetSignal, NULL },
+  { "/meta/dump", cgiMetaDump, NULL },
+  { "/meta/test/dump", cgiMetaCheckAuth, "/meta/dump"},
   { "/menu", cgiMenu, NULL },
   { "/flash/next", cgiGetFirmwareNext, NULL },
   { "/flash/upload", cgiUploadFirmware, NULL },
@@ -99,7 +103,7 @@ HttpdBuiltInUrl builtInUrls[] = {
   //    {"/wifi/*", authBasic, myPassFn},
   { "/wifi", cgiRedirect, "/wifi/wifi.html" },
   { "/wifi/", cgiRedirect, "/wifi/wifi.html" },
-  { "/wifi/info", cgiWifiInfo, NULL },
+  { "/wifi/info", cgiMetaCheckAuthCgi, cgiWifiInfo},
   { "/wifi/scan", cgiWiFiScan, NULL },
   { "/wifi/connect", cgiWiFiConnect, NULL },
   { "/wifi/connstatus", cgiWiFiConnStatus, NULL },

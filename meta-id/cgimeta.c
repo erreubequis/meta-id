@@ -15,20 +15,177 @@
 #include "config.h"
 #include "sntp.h"
 #include "cgimqtt.h"
+#include "cgimeta.h"
 #include "cgiwifi.h"
 #include "web-server.h"
+#include "hash.h"
 #ifdef SYSLOG
 #include "syslog.h"
 #endif
 #define DBG(format, ...) do { os_printf(format, ## __VA_ARGS__); } while(0)
 
 // todo : typedef MetaLimen
-short MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
+char MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
 
 void ICACHE_FLASH_ATTR cgiMetaInit() {
   for (int i=0; i<16; i++) {
 	MetaLimen[i] = 0;
 	}
+}
+
+int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
+  char buff[1024];
+
+  if (connData->conn == NULL) return HTTPD_CGI_DONE; // Connection aborted. Clean up.
+
+  uint8 part_id = system_upgrade_userbin_check();
+  uint32 fid = spi_flash_get_id();
+  struct rst_info *rst_info = system_get_rst_info();
+
+  os_sprintf(buff,
+    "{ "
+      "\"name\": \"%s\", "
+      "\"reset cause\": \"%d=%s\", "
+      "\"size\": \"%s\", "
+      "\"upload-size\": \"%d\", "
+      "\"id\": \"0x%02X 0x%04X\", "
+      "\"partition\": \"%s\", "
+      "\"slip\": \"%s\", "
+      "\"mqtt\": \"%s/%s\", "
+      "\"baud\": \"%d\", "
+      "\"pass\": \"%s\", "
+      "\"description\": \"%s\""
+    " }",
+    flashConfig.hostname,
+    rst_info->reason,
+    rst_codes[rst_info->reason],
+    flash_maps[system_get_flash_size_map()],
+    getUserPageSectionEnd()-getUserPageSectionStart(),
+    fid & 0xff, (fid & 0xff00) | ((fid >> 16) & 0xff),
+    part_id ? "user2.bin" : "user1.bin",
+    flashConfig.slip_enable ? "enabled" : "disabled",
+    flashConfig.mqtt_enable ? "enabled" : "disabled",
+    mqttState(),
+    flashConfig.baud_rate,
+    flashConfig.user_pass,
+    flashConfig.sys_descr
+    );
+
+  jsonHeader(connData, 200);
+  httpdSend(connData, buff, -1);
+  return HTTPD_CGI_DONE;
+}
+
+int ICACHE_FLASH_ATTR cgiMetaUserPass(HttpdConnData *connData) {
+  int8 pl;
+	char passwd[USER_PASS_LENGTH];
+	memset(passwd,0,USER_PASS_LENGTH);
+  DBG("META: setting UserPass...\n");
+  if (connData->conn==NULL) 
+	return HTTPD_CGI_DONE;
+pl = 0;
+	pl|=getStringArg(connData, "passwd", passwd,USER_PASS_LENGTH);
+	if (pl<0){
+  DBG("META: setting UserPass failed !\n");
+return HTTPD_CGI_DONE;
+		}
+  DBG("META: setting UserPass to |%s|\n",flashConfig.user_pass);
+	os_sprintf(flashConfig.user_pass,passwd);
+  if (configSave()) {
+uint32 hash;
+	hash= SuperFastHash(flashConfig.user_pass);
+  DBG("META: setting Hash to |%d|\n",hash);
+	httpdCookieRedirect(connData,"/welcome.html",hash);
+  }
+  else {
+    httpdStartResponse(connData, 500);
+    httpdEndHeaders(connData);
+    httpdSend(connData, "Failed to save config", -1);
+  }
+  return HTTPD_CGI_DONE;
+}
+
+int ICACHE_FLASH_ATTR cgiMetaCheckAuth(HttpdConnData *connData) {
+	uint32 hash;
+  if (connData->conn==NULL) 
+	return HTTPD_CGI_DONE;
+	hash=SuperFastHash(flashConfig.user_pass);
+	DBG("META: checkAuthCgi with |%d| - |%d|\n",hash,connData->hash);
+	if(hash==connData->hash)
+		httpdRedirect(connData,(char*)connData->cgiArg);
+	else
+		httpdForbidden(connData) ;
+	
+  return HTTPD_CGI_DONE;
+
+}
+
+int ICACHE_FLASH_ATTR cgiMetaCheckAuthCgi(HttpdConnData *connData) {
+	uint32 hash;
+	int r;
+  if (connData->conn==NULL) 
+	return HTTPD_CGI_DONE;
+	hash=SuperFastHash(flashConfig.user_pass);
+	DBG("META: checkAuthCgi with |%d| - |%d|\n",hash,connData->hash);
+	if(hash==connData->hash){
+		connData->cgi=connData->cgiArg;
+		connData->cgiArg=NULL;
+    r = connData->cgi(connData);
+    if (r == HTTPD_CGI_MORE) {
+      //Yep, it's happy to do so and has more data to send.
+      httpdFlush(connData);
+      return r;
+    }
+    else if (r == HTTPD_CGI_DONE) {
+      //Yep, it's happy to do so and already is done sending data.
+      httpdFlush(connData);
+      connData->cgi = NULL; //mark for destruction.
+      if (connData->post) connData->post->len = 0; // skip any remaining receives
+      return r;
+    }
+	}
+	else
+		httpdForbidden(connData) ;
+	
+  return HTTPD_CGI_DONE;
+
+}
+
+int ICACHE_FLASH_ATTR cgiMetaAuth(HttpdConnData *connData) {
+	uint32 hash, flashhash;
+	int8 pl;
+	char passwd[USER_PASS_LENGTH];
+	memset(passwd,0,USER_PASS_LENGTH);
+	DBG("META: auth...\n");
+	if (connData->conn==NULL) 
+		return HTTPD_CGI_DONE;
+	pl = 0;
+	pl|=getStringArg(connData, "passwd", passwd, USER_PASS_LENGTH);
+	if (pl<0){
+		DBG("META: auth failed to retrieve password !\n");
+		return HTTPD_CGI_DONE;
+	}
+	hash= SuperFastHash(passwd);
+    flashhash=SuperFastHash(flashConfig.user_pass);
+	DBG("META: auth with |%d| - |%d|[%s]\n",hash,flashhash,passwd);
+	if (hash==flashhash){
+		httpdCookieRedirect(connData, "/user.html", hash) ;
+	}
+	else{
+		httpdForbidden(connData) ;
+	}
+  return HTTPD_CGI_DONE;
+
+}
+
+int ICACHE_FLASH_ATTR cgiMetaHome(HttpdConnData *connData) {
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+//	FlashConfig.user_pass
+	if(flashConfig.user_pass[0])
+		httpdRedirect(connData, "/welcome.html") ;
+	else
+		httpdRedirect(connData, "/init.html") ;
+  return HTTPD_CGI_DONE;
 }
 
 int ICACHE_FLASH_ATTR cgiMetaGetSignal(HttpdConnData *connData) {
@@ -69,9 +226,9 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
 
   char buff[1024];
   int len;
-  int8_t ok = 0; // error indicator
-  int8_t num;
-  int8_t out;
+  int8 ok = 0; // error indicator
+  int8 num;
+  int8 out;
   ok |= getInt8Arg(connData, "num", &num);
   ok |= getInt8Arg(connData, "v", &out);
 	if (!ok){

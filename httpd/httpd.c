@@ -272,6 +272,26 @@ void ICACHE_FLASH_ATTR httpdRedirect(HttpdConnData *conn, char *newUrl) {
   httpdSend(conn, buff, l);
 }
 
+// set cookie with password hash and redirect
+void ICACHE_FLASH_ATTR httpdCookieRedirect(HttpdConnData *conn, char *newUrl, uint32 hash) {
+  char buff[1024];
+  int l;
+  connData->priv->code = 302;
+  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\nConnection: close\r\n"
+      "Location:  %s\r\nSet-Cookie: %d\r\n\r\nRedirecting to  %s\r\n",newUrl, hash,newUrl);
+  httpdSend(connData, buff, l);
+}
+
+// authentication failed
+void ICACHE_FLASH_ATTR httpdForbidden(HttpdConnData *conn) {
+  char buff[1024];
+  int l;
+  connData->priv->code = 401;
+  l = os_sprintf(buff, "HTTP/1.0 401 Forbidden\r\nServer: meta-id\r\nConnection: close\r\n\r\n"
+      "Not allowed<br/><a href=\"/meta/auth\">Login</a>\r\n");
+  httpdSend(connData, buff, l);
+}
+
 //Use this as a cgi function to redirect one url to another.
 int ICACHE_FLASH_ATTR cgiRedirect(HttpdConnData *connData) {
   if (connData->conn == NULL) {
@@ -487,6 +507,13 @@ static void ICACHE_FLASH_ATTR httpdParseHeader(char *h, HttpdConnData *conn) {
         //DBG("boundary = %s\n", conn->post->multipartBoundary);
       }
     }
+  }
+  else if (os_strncmp(h, "Cookie: ", 8) == 0) {
+    i = 9;
+    //Skip trailing spaces
+    while (h[i] == ' ') i++;
+    //Get POST data length
+    conn->hash = (uint32_t)atoi(h + i);
   }
 }
 
