@@ -33,6 +33,7 @@
 #include "log.h"
 #include "gpio.h"
 #include "cgiservices.h"
+#include "captivedns.h"
 
 #ifdef WEBSERVER
 #include "web-server.h"
@@ -69,63 +70,64 @@ general ones. Authorization things (like authBasic) act as a 'barrier' and
 should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
-  { "/", cgiMetaHome, NULL },
-  { "/meta.wav", cgiMetaWav, NULL },
-  { "/meta/userpass", cgiMetaUserPass, NULL },
-  { "/meta/auth", cgiMetaAuth, "/welcome.html" },
-  { "/meta/gpio", cgiMetaGpio, NULL },
-  { "/meta/signal", cgiMetaGetSignal, NULL },
-  { "/meta/dump", cgiMetaDump, NULL },
-  { "/meta/test/dump", cgiMetaCheckAuth, "/meta/dump"},
-  { "/menu", cgiMenu, NULL },
-  { "/flash/next", cgiGetFirmwareNext, NULL },
-  { "/flash/upload", cgiUploadFirmware, NULL },
-  { "/flash/reboot", cgiRebootFirmware, NULL },
+  { "/", cgiMetaHome, NULL,0 },
+  { "/meta.wav", cgiMetaWav, NULL ,0},
+  { "/meta/userpass", cgiMetaUserPass, NULL,0 },
+  { "/meta/auth", cgiMetaAuth, "/welcome.html",0 },
+  { "/logout", cgiMetaLogout, "/",0 },
+  { "/meta/gpio", cgiMetaGpio, NULL ,0},
+  { "/meta/signal", cgiMetaGetSignal, NULL,0 },
+  { "/meta/dump", cgiMetaDump, NULL,0 },
+  { "/menu", cgiMenu, NULL ,0},
+  { "/flash/next", cgiGetFirmwareNext, NULL ,0},
+  { "/flash/upload", cgiUploadFirmware, NULL ,0},
+  { "/flash/reboot", cgiRebootFirmware, NULL ,0},
 
-  { "/pgm/sync", cgiOptibootSync, NULL },
-  { "/pgm/upload", cgiOptibootData, NULL },
+  { "/pgm/sync", cgiOptibootSync, NULL ,0},
+  { "/pgm/upload", cgiOptibootData, NULL,0 },
 
-  { "/pgmmega/sync", cgiMegaSync, NULL },		// Start programming mode
-  { "/pgmmega/upload", cgiMegaData, NULL },		// Upload stuff
-  { "/pgmmega/read/*", cgiMegaRead, NULL },		// Download stuff (to verify)
-  { "/pgmmega/fuse/*", cgiMegaFuse, NULL },		// Read or write fuse
-  { "/pgmmega/rebootmcu", cgiMegaRebootMCU, NULL },	// Get out of programming mode
+  { "/pgmmega/sync", cgiMegaSync, NULL,0 },		// Start programming mode
+  { "/pgmmega/upload", cgiMegaData, NULL ,0},		// Upload stuff
+  { "/pgmmega/read/*", cgiMegaRead, NULL,0 },		// Download stuff (to verify)
+  { "/pgmmega/fuse/*", cgiMegaFuse, NULL ,0},		// Read or write fuse
+  { "/pgmmega/rebootmcu", cgiMegaRebootMCU, NULL ,0},	// Get out of programming mode
 
-  { "/log/text", ajaxLog, NULL },
-  { "/log/dbg", ajaxLogDbg, NULL },
-  { "/log/reset", cgiReset, NULL },
-  { "/console/reset", ajaxConsoleReset, NULL },
-  { "/console/baud", ajaxConsoleBaud, NULL },
-  { "/console/fmt", ajaxConsoleFormat, NULL },
-  { "/console/text", ajaxConsole, NULL },
-  { "/console/send", ajaxConsoleSend, NULL },
+  { "/log/text", ajaxLog, NULL ,0},
+  { "/log/dbg", ajaxLogDbg, NULL ,0},
+  { "/log/reset", cgiReset, NULL ,0},
+  { "/console/reset", ajaxConsoleReset, NULL ,0},
+  { "/console/baud", ajaxConsoleBaud, NULL ,0},
+  { "/console/fmt", ajaxConsoleFormat, NULL ,0},
+  { "/console/text", ajaxConsole, NULL ,0},
+  { "/console/send", ajaxConsoleSend, NULL ,0},
+  { "/user.html", cgiEspFsHook, NULL ,'a'},
   //Enable the line below to protect the WiFi configuration with an username/password combo.
-  //    {"/wifi/*", authBasic, myPassFn},
-  { "/wifi", cgiRedirect, "/wifi/wifi.html" },
-  { "/wifi/", cgiRedirect, "/wifi/wifi.html" },
-  { "/wifi/info", cgiMetaCheckAuthCgi, cgiWifiInfo},
-  { "/wifi/scan", cgiWiFiScan, NULL },
-  { "/wifi/connect", cgiWiFiConnect, NULL },
-  { "/wifi/connstatus", cgiWiFiConnStatus, NULL },
-  { "/wifi/setmode", cgiWiFiSetMode, NULL },
-  { "/wifi/special", cgiWiFiSpecial, NULL },
-  { "/wifi/apinfo", cgiApSettingsInfo, NULL },
-  { "/wifi/apchange", cgiApSettingsChange, NULL },
-  { "/system/info", cgiSystemInfo, NULL },
-  { "/system/update", cgiSystemSet, NULL },
-  { "/services/info", cgiServicesInfo, NULL },
-  { "/services/update", cgiServicesSet, NULL },
-  { "/pins", cgiPins, NULL },
+//{"/wifi/*", authBasic, metaAuth,0},
+  { "/wifi", cgiRedirect, "/wifi/wifi.html" ,0},
+  { "/wifi/", cgiRedirect, "/wifi/wifi.html" ,0},
+  { "/wifi/info", cgiWifiInfo, NULL,'a'},
+  { "/wifi/scan", cgiWiFiScan, NULL ,0},
+  { "/wifi/connect", cgiWiFiConnect, NULL ,0},
+  { "/wifi/connstatus", cgiWiFiConnStatus, NULL ,0},
+  { "/wifi/setmode", cgiWiFiSetMode, NULL,0 },
+  { "/wifi/special", cgiWiFiSpecial, NULL,0 },
+  { "/wifi/apinfo", cgiApSettingsInfo, NULL ,0},
+  { "/wifi/apchange", cgiApSettingsChange, NULL,0 },
+  { "/system/info", cgiSystemInfo, NULL ,0},
+  { "/system/update", cgiSystemSet, NULL ,0},
+  { "/services/info", cgiServicesInfo, NULL ,0},
+  { "/services/update", cgiServicesSet, NULL ,0},
+  { "/pins", cgiPins, NULL ,0},
 #ifdef MQTT
-  { "/mqtt", cgiMqtt, NULL },
+  { "/mqtt", cgiMqtt, NULL ,0},
 #endif
 #ifdef WEBSERVER
-  { "/web-server/upload", cgiWebServerSetupUpload, NULL },
-  { "/web-server/list", cgiWebServerList, NULL },
-  { "*.json", WEB_CgiJsonHook, NULL }, //Catch-all cgi JSON queries
+  { "/web-server/upload", cgiWebServerSetupUpload, NULL ,0},
+  { "/web-server/list", cgiWebServerList, NULL ,0},
+  { "*.json", WEB_CgiJsonHook, NULL,0 }, //Catch-all cgi JSON queries
 #endif
-  { "*", cgiEspFsHook, NULL }, //Catch-all cgi function for the filesystem
-  { NULL, NULL, NULL }
+  { "*", cgiEspFsHook, NULL ,0}, //Catch-all cgi function for the filesystem
+  { NULL, NULL, NULL ,0}
 };
 
 #ifdef SHOW_HEAP_USE
@@ -201,7 +203,7 @@ user_init(void) {
   //EspFsInitResult res = espFsInit(&_binary_espfs_img_start);
   //os_printf("espFsInit %s\n", res?"ERR":"ok");
   // mount the http handlers
-  httpdInit(builtInUrls, 80);
+  httpdInit(builtInUrls, flashConfig.hostname, 80);
 #ifdef WEBSERVER
   WEB_Init();
 #endif
@@ -209,6 +211,7 @@ user_init(void) {
   // init the wifi-serial transparent bridge (port 23)
   serbridgeInit(23, 2323);
   uart_add_recv_cb(&serbridgeUartCb);
+	cdnsStart(flashConfig.hostname,53);
 #ifdef SHOW_HEAP_USE
   os_timer_disarm(&prHeapTimer);
   os_timer_setfn(&prHeapTimer, prHeapTimerCb, NULL);

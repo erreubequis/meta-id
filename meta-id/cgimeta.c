@@ -75,26 +75,29 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
   httpdSend(connData, buff, -1);
   return HTTPD_CGI_DONE;
 }
+int metaCheckHash (int32 hash){
+	int32 flashhash;
+	flashhash=SuperFastHash(flashConfig.user_pass);
+	return flashhash==hash;
+}
 
 int ICACHE_FLASH_ATTR cgiMetaUserPass(HttpdConnData *connData) {
   int8 pl;
-	char passwd[USER_PASS_LENGTH];
+  char passwd[USER_PASS_LENGTH];
 	memset(passwd,0,USER_PASS_LENGTH);
-  DBG("META: setting UserPass...\n");
   if (connData->conn==NULL) 
 	return HTTPD_CGI_DONE;
-pl = 0;
+	pl = 0;
 	pl|=getStringArg(connData, "passwd", passwd,USER_PASS_LENGTH);
 	if (pl<0){
-  DBG("META: setting UserPass failed !\n");
-return HTTPD_CGI_DONE;
-		}
-  DBG("META: setting UserPass to |%s|\n",flashConfig.user_pass);
+		DBG("META: setting UserPass failed !\n");
+		return HTTPD_CGI_DONE;
+	}
+	DBG("META: setting UserPass to |%s|\n",flashConfig.user_pass);
 	os_sprintf(flashConfig.user_pass,passwd);
-  if (configSave()) {
-uint32 hash;
+	if (configSave()) {
+	int32 hash;
 	hash= SuperFastHash(flashConfig.user_pass);
-  DBG("META: setting Hash to |%d|\n",hash);
 	httpdCookieRedirect(connData,"/welcome.html",hash);
   }
   else {
@@ -105,8 +108,15 @@ uint32 hash;
   return HTTPD_CGI_DONE;
 }
 
+int ICACHE_FLASH_ATTR cgiMetaLogout(HttpdConnData *connData) {
+  if (connData->conn==NULL) 
+	return HTTPD_CGI_DONE;
+	httpdCookieRedirect(connData,(char*)connData->cgiArg,0);
+  return HTTPD_CGI_DONE;
+}
+
 int ICACHE_FLASH_ATTR cgiMetaCheckAuth(HttpdConnData *connData) {
-	uint32 hash;
+	int32 hash;
   if (connData->conn==NULL) 
 	return HTTPD_CGI_DONE;
 	hash=SuperFastHash(flashConfig.user_pass);
@@ -121,7 +131,7 @@ int ICACHE_FLASH_ATTR cgiMetaCheckAuth(HttpdConnData *connData) {
 }
 
 int ICACHE_FLASH_ATTR cgiMetaCheckAuthCgi(HttpdConnData *connData) {
-	uint32 hash;
+	int32 hash;
 	int r;
   if (connData->conn==NULL) 
 	return HTTPD_CGI_DONE;
@@ -152,7 +162,7 @@ int ICACHE_FLASH_ATTR cgiMetaCheckAuthCgi(HttpdConnData *connData) {
 }
 
 int ICACHE_FLASH_ATTR cgiMetaAuth(HttpdConnData *connData) {
-	uint32 hash, flashhash;
+	int32 hash, flashhash;
 	int8 pl;
 	char passwd[USER_PASS_LENGTH];
 	memset(passwd,0,USER_PASS_LENGTH);

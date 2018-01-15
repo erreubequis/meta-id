@@ -13,6 +13,8 @@ int cgiMetaWav(HttpdConnData *connData);
 int cgiMetaGpio(HttpdConnData *connData);
 int cgiMetaGetSignal(HttpdConnData *connData);
 void cgiMetaInit();
+int metaCheckHash (int32 hash);
+int cgiMetaLogout(HttpdConnData *connData);
 
 extern char* rst_codes[7];
 extern char* flash_maps[7];

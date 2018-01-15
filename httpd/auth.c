@@ -34,7 +34,7 @@ int ICACHE_FLASH_ATTR authBasic(HttpdConnData *connData) {
 		r=base64_decode(strlen(hdr)-6, hdr+6, sizeof(userpass), (unsigned char *)userpass);
 		if (r<0) r=0; //just clean out string on decode error
 		userpass[r]=0; //zero-terminate user:pass string
-//		os_printf("Auth: %s\n", userpass);
+		os_printf("Auth: %s\n", userpass);
 		while (((AuthGetUserPw)(connData->cgiArg))(connData, no,
 				user, AUTH_MAX_USER_LEN, pass, AUTH_MAX_PASS_LEN)) {
 			//Check user/pass against auth header
@@ -42,6 +42,7 @@ int ICACHE_FLASH_ATTR authBasic(HttpdConnData *connData) {
 					os_strncmp(userpass, user, strlen(user))==0 &&
 					userpass[strlen(user)]==':' &&
 					os_strcmp(userpass+strlen(user)+1, pass)==0) {
+		os_printf("Auth: enticated. Yay!\n");
 				//Authenticated. Yay!
 				return HTTPD_CGI_AUTHENTICATED;
 			}

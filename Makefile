@@ -103,7 +103,7 @@ LED_SERIAL_PIN      ?= 14
 # --------------- meta-id modules config options ---------------
 
 # Optional Modules: mqtt rest socket web-server syslog
-MODULES ?= mqtt rest socket web-server syslog
+MODULES ?= mqtt rest socket web-server
 
 # --------------- esphttpd config options ---------------
 
@@ -238,7 +238,7 @@ endif
 
 # which modules (subdirectories) of the project to include in compiling
 LIBRARIES_DIR 	= libraries
-MODULES		+= espfs httpd user serial cmd meta-id
+MODULES		+= espfs httpd user serial cmd meta-id dnsd
 MODULES		+= $(foreach sdir,$(LIBRARIES_DIR),$(wildcard $(sdir)/*))
 EXTRA_INCDIR 	= include .
 

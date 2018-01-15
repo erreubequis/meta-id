@@ -24,6 +24,7 @@ Esp8266 http server - core routines
 #define DBG(format, ...) do { } while(0)
 #endif
 
+extern int metaCheckHash (int32 hash);
 
 //Max length of request head
 #define MAX_HEAD_LEN 1024
@@ -57,6 +58,7 @@ static HttpdPostData connPostData[MAX_CONN];
 //Listening connection data
 static struct espconn httpdConn;
 static esp_tcp httpdTcp;
+static char metahostname[64];
 
 //Struct to keep extension->mime data in
 typedef struct {
@@ -273,12 +275,16 @@ void ICACHE_FLASH_ATTR httpdRedirect(HttpdConnData *conn, char *newUrl) {
 }
 
 // set cookie with password hash and redirect
+// if hash=0, delete cookie with date in past
 void ICACHE_FLASH_ATTR httpdCookieRedirect(HttpdConnData *conn, char *newUrl, uint32 hash) {
   char buff[1024];
-  int l;
+  int l,expire;
   connData->priv->code = 302;
-  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\nConnection: close\r\n"
-      "Location:  %s\r\nSet-Cookie: %d\r\n\r\nRedirecting to  %s\r\n",newUrl, hash,newUrl);
+  if(hash==0)expire=1979;else expire=2024;
+  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\n"
+      "Location:  %s\r\nSet-Cookie: h=%d;Domain=%s;" 
+      "Path=/; Expires=Mon, 1 Jan %d 23:42:01 GMT; HttpOnly\r\n\r\n" 
+      "Redirecting to  %s\r\n",newUrl, hash, metahostname, expire, newUrl);
   httpdSend(connData, buff, l);
 }
 
@@ -386,6 +392,18 @@ static void ICACHE_FLASH_ATTR httpdProcessRequest(HttpdConnData *conn) {
         else if (builtInUrls[i].url[0] == '*' && ( strlen(conn->url) >= urlLen -1 )  &&
           os_strncmp(builtInUrls[i].url + 1, conn->url + strlen(conn->url) - urlLen + 1, urlLen - 1) == 0) match = 1;
         if (match) {
+			if(builtInUrls[i].auth){
+        DBG("%s%s auth check!\n", connStr, conn->url);
+				if(!metaCheckHash(conn->hash)){
+        DBG("%s%s failed authentication - 401!\n", connStr, conn->url);
+					httpdForbidden(conn);
+					httpdFlush(conn);
+					conn->cgi = NULL; //mark for destruction.
+					if (conn->post) conn->post->len = 0; // skip any remaining receives
+					return;
+				}
+        DBG("%s%s Authenticated, proceeding\n", connStr, conn->url);
+			}
           //os_printf("Is url index %d\n", i);
           conn->cgiData = NULL;
 	  conn->cgiResponse = NULL;
@@ -407,8 +425,8 @@ static void ICACHE_FLASH_ATTR httpdProcessRequest(HttpdConnData *conn) {
       }
     }
 
-    //Okay, we have a CGI function that matches the URL. See if it wants to handle the
-    //particular URL we're supposed to handle.
+    //Okay, we have a CGI function that matches the URL. 
+    // See if it wants to handle the particular URL we're supposed to handle.
     r = conn->cgi(conn);
     if (r == HTTPD_CGI_MORE) {
       //Yep, it's happy to do so and has more data to send.
@@ -508,12 +526,11 @@ static void ICACHE_FLASH_ATTR httpdParseHeader(char *h, HttpdConnData *conn) {
       }
     }
   }
-  else if (os_strncmp(h, "Cookie: ", 8) == 0) {
-    i = 9;
-    //Skip trailing spaces
-    while (h[i] == ' ') i++;
-    //Get POST data length
-    conn->hash = (uint32_t)atoi(h + i);
+  else if (os_strncmp(h, "Cookie:", 7) == 0) {
+    char*hash;
+    hash=os_strstr(h,"h=");
+    conn->hash = (uint32_t)atoi(hash+2);
+	DBG("got cookie = %d\n", conn->hash);
   }
 }
 
@@ -526,6 +543,7 @@ static void ICACHE_FLASH_ATTR httpdRecvCb(void *arg, char *data, unsigned short 
   if (conn == NULL) return; // aborted connection
 
   char sendBuff[MAX_SENDBUFF_LEN];
+
   httpdSetOutputBuffer(conn, sendBuff, sizeof(sendBuff));
 
   //This is slightly evil/dirty: we abuse conn->post->len as a state variable for where in the http communications we are:
@@ -640,7 +658,7 @@ static void ICACHE_FLASH_ATTR httpdConnectCb(void *arg) {
 }
 
 //Httpd initialization routine. Call this to kick off webserver functionality.
-void ICACHE_FLASH_ATTR httpdInit(HttpdBuiltInUrl *fixedUrls, int port) {
+void ICACHE_FLASH_ATTR httpdInit(HttpdBuiltInUrl *fixedUrls, char* hostname, int port) {
   int i;
 
   for (i = 0; i<MAX_CONN; i++) {
@@ -651,6 +669,7 @@ void ICACHE_FLASH_ATTR httpdInit(HttpdBuiltInUrl *fixedUrls, int port) {
   httpdTcp.local_port = port;
   httpdConn.proto.tcp = &httpdTcp;
   builtInUrls = fixedUrls;
+os_sprintf(metahostname,hostname);
   DBG("Httpd init, conn=%p\n", &httpdConn);
   espconn_regist_connectcb(&httpdConn, httpdConnectCb);
   espconn_accept(&httpdConn);

@@ -1,2 +1,2 @@
 
-uint32 SuperFastHash (const char * );
+int32 SuperFastHash (const char * );

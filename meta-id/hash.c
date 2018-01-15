@@ -14,13 +14,13 @@
 #endif
 
 #if !defined (get16bits)
-#define get16bits(d) ((((uint32)(((const uint8 *)(d))[1])) << 8)\
-                       +(uint32)(((const uint8 *)(d))[0]) )
+#define get16bits(d) ((((int32)(((const uint8 *)(d))[1])) << 8)\
+                       +(int32)(((const uint8 *)(d))[0]) )
 #endif
 
-uint32 SuperFastHash (const char * data) {
-uint32 len =0;
-uint32 hash, tmp;
+int32 SuperFastHash (const char * data) {
+int32 len =0;
+int32 hash, tmp;
 int rem;
 DBG("SFH: [%s]...\n",data);
 while(len < 128 && data[len])len++;
