@@ -123,8 +123,8 @@ int ICACHE_FLASH_ATTR cgiServicesInfo(HttpdConnData *connData) {
 #endif
       "\"timezone_offset\": %d, "
       "\"sntp_server\": \"%s\", "
-      "\"mdns_enable\": \"%s\", "
-      "\"mdns_servername\": \"%s\""
+//      "\"mdns_enable\": \"%s\", "
+//      "\"mdns_servername\": \"%s\""
     " }",
 #ifdef SYSLOG
     flashConfig.syslog_host,
@@ -134,9 +134,9 @@ int ICACHE_FLASH_ATTR cgiServicesInfo(HttpdConnData *connData) {
     flashConfig.syslog_showdate ? "enabled" : "disabled",
 #endif
     flashConfig.timezone_offset,
-    flashConfig.sntp_server,
-    flashConfig.mdns_enable ? "enabled" : "disabled",
-    flashConfig.mdns_servername
+    flashConfig.sntp_server
+//    flashConfig.mdns_enable ? "enabled" : "disabled",
+//    flashConfig.mdns_servername
     );
 
   jsonHeader(connData, 200);
@@ -174,44 +174,6 @@ int ICACHE_FLASH_ATTR cgiServicesSet(HttpdConnData *connData) {
 
   if (sntp > 0) {
     cgiServicesSNTPInit();
-  }
-
-  int8_t mdns = 0;
-  mdns |= getBoolArg(connData, "mdns_enable", &flashConfig.mdns_enable);
-  if (mdns < 0) return HTTPD_CGI_DONE;
-
-  if (mdns > 0) {
-    if (flashConfig.mdns_enable){
-      DBG("Services: MDNS Enabled\n");
-      struct ip_info ipconfig;
-      wifi_get_ip_info(STATION_IF, &ipconfig);
-
-      if (wifiState == wifiGotIP && ipconfig.ip.addr != 0) {
-        wifiStartMDNS(ipconfig.ip);
-      }
-    }
-    else {
-      DBG("Services: MDNS Disabled\n");
-      espconn_mdns_server_unregister();
-      espconn_mdns_close();
-      mdns_started = true;
-    }
-  }
-  else {
-    mdns |= getStringArg(connData, "mdns_servername", flashConfig.mdns_servername, sizeof(flashConfig.mdns_servername));
-    if (mdns < 0) return HTTPD_CGI_DONE;
-
-    if (mdns > 0 && mdns_started) {
-      DBG("Services: MDNS Servername Updated\n");
-      espconn_mdns_server_unregister();
-      espconn_mdns_close();
-      struct ip_info ipconfig;
-      wifi_get_ip_info(STATION_IF, &ipconfig);
-
-      if (wifiState == wifiGotIP && ipconfig.ip.addr != 0) {
-        wifiStartMDNS(ipconfig.ip);
-      }
-    }
   }
 
   if (configSave()) {

@@ -30,7 +30,6 @@ Cgi/template routines for the /wifi url.
 # define VERS_STR_STR(V) #V
 # define VERS_STR(V) VERS_STR_STR(V)
 
-bool mdns_started = false;
 
 // ===== wifi status change callbacks
 static WifiStateChangeCb wifi_state_change_cb[4];
@@ -91,8 +90,6 @@ static void ICACHE_FLASH_ATTR wifiHandleEventCb(System_Event_t *evt) {
       IP2STR(&evt->event_info.got_ip.ip), IP2STR(&evt->event_info.got_ip.mask),
       IP2STR(&evt->event_info.got_ip.gw));
     statusWifiUpdate(wifiState);
-    if (!mdns_started)
-      wifiStartMDNS(evt->event_info.got_ip.ip);
     break;
   case EVENT_SOFTAPMODE_STACONNECTED:
     DBG("Wifi AP: station " MACSTR " joined, AID = %d\n",
@@ -120,33 +117,6 @@ void ICACHE_FLASH_ATTR wifiAddStateChangeCb(WifiStateChangeCb cb) {
     }
   }
   DBG("WIFI: max state change cb count exceeded\n");
-}
-
-static struct mdns_info *mdns_info;
-// See https://github.com/arduino/Arduino/blob/master/arduino-core/src/cc/arduino/packages/discoverers/NetworkDiscovery.java#L155-L168
-static char* mdns_txt = "ssh_upload=no";
-
-void ICACHE_FLASH_ATTR wifiStartMDNS(struct ip_addr ip) {
-  if (flashConfig.mdns_enable) {
-    if (mdns_info == NULL)
-      mdns_info = (struct mdns_info *)os_zalloc(sizeof(struct mdns_info));
-
-    mdns_info->host_name = flashConfig.hostname;
-    mdns_info->server_name = flashConfig.mdns_servername;
-    mdns_info->server_port = 80;
-    mdns_info->ipAddr = ip.addr;
-    mdns_info->txt_data[0] = mdns_txt;
-    espconn_mdns_init(mdns_info);
-  }
-  else {
-    espconn_mdns_server_unregister();
-    espconn_mdns_close();
-    if (mdns_info != NULL) {
-      os_free(mdns_info);
-      mdns_info = NULL;
-    }
-  }
-  mdns_started = true;
 }
 
 // ===== wifi scanning

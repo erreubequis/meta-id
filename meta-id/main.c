@@ -35,6 +35,8 @@
 #include "cgiservices.h"
 #include "captivedns.h"
 
+#undef LWIP_MDNS
+
 #ifdef WEBSERVER
 #include "web-server.h"
 #endif
@@ -211,7 +213,7 @@ user_init(void) {
   // init the wifi-serial transparent bridge (port 23)
   serbridgeInit(23, 2323);
   uart_add_recv_cb(&serbridgeUartCb);
-	cdnsStart(flashConfig.hostname,53);
+  cdnsInit(flashConfig.hostname,53);
 #ifdef SHOW_HEAP_USE
   os_timer_disarm(&prHeapTimer);
   os_timer_setfn(&prHeapTimer, prHeapTimerCb, NULL);
@@ -237,7 +239,7 @@ user_init(void) {
   }
 #endif
   NOTICE("initializing user application");
-  app_init();
+  //app_init();
   NOTICE("Waiting for work to do...");
 #ifdef MEMLEAK_DEBUG
   system_show_malloc();

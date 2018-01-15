@@ -34,8 +34,8 @@ typedef struct {
   uint8_t  syslog_filter,              // min. severity
            syslog_showtick,            // show system tick (µs)
            syslog_showdate;            // populate SYSLOG date field
-  uint8_t  mdns_enable;
-  char     mdns_servername[32];
+  /*uint8_t  mdns_enable;
+  char     mdns_servername[32];*/
   int8_t   timezone_offset;
   char     mqtt_host[64];              // MQTT host we connect to, was 32-char mqtt_old_host
   int8_t   data_bits;

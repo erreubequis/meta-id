@@ -49,7 +49,6 @@ function displayServices(data) {
 
   $("#syslog-spinner").setAttribute("hidden", "");
   $("#sntp-spinner").setAttribute("hidden", "");
-  $("#mdns-spinner").setAttribute("hidden", "");
 
   if (data.syslog_host !== undefined) {
     $("#Syslog-form").removeAttribute("hidden");
@@ -58,21 +57,8 @@ function displayServices(data) {
     $("#Syslog-form").parentNode.setAttribute("hidden", "");
   }
   $("#SNTP-form").removeAttribute("hidden");
-  $("#mDNS-form").removeAttribute("hidden");
 
   var i, inputs = $("input");
-  for (i = 0; i < inputs.length; i++) {
-    if (inputs[i].name == "mdns_enable") inputs[i].onclick = function () { setMDNS(this.checked) };
-  }
-}
-
-function setMDNS(v) {
-  ajaxSpin("POST", "/services/update?mdns_enable=" + (v ? 1 : 0), function () {
-    showNotification("mDNS is now " + (v ? "enabled" : "disabled"));
-  }, function () {
-    showWarning("Enable/disable failed");
-    window.setTimeout(fetchServices, 100);
-  });
 }
 
 function fetchServices() {
