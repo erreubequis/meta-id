@@ -16,8 +16,8 @@ void cgiMetaInit();
 int metaCheckHash (int32 hash);
 int cgiMetaLogout(HttpdConnData *connData);
 int cgiMetaGetSSID(HttpdConnData *connData);
-int meta_init_gpio();
-
+//int meta_init_gpio();
+int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) ;
 extern char* rst_codes[7];
 extern char* flash_maps[7];
 extern char MetaLimen[16];

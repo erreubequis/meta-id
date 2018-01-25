@@ -18,6 +18,7 @@
 #include "cgimeta.h"
 #include "cgiwifi.h"
 #include "web-server.h"
+#include "httpclient.h"
 #include "hash.h"
 #ifdef SYSLOG
 #include "syslog.h"
@@ -31,6 +32,30 @@ void ICACHE_FLASH_ATTR cgiMetaInit() {
   for (int i=0; i<16; i++) {
 	MetaLimen[i] = 0;
 	}
+}
+
+char ICACHE_FLASH_ATTR translate(short i){
+  if(i<10) return i+'0';
+  if(i<36) return i-10+'a';
+  if(i<62) return i-36+'A';
+  if(i==62) return '_';
+  if(i==63) return '-';
+  return '?';
+}
+
+static void ICACHE_FLASH_ATTR metaSSID(char* output){
+//	int len;
+  char input[6];
+	wifi_get_macaddr(1, (uint8*)input);
+//  len = os_sprintf(buff,"{input:\"%02x:%02x:%02x:%02x:%02x:%02x\", ",input[0],input[1],input[2],input[3],input[4],input[5]);
+	for(int i=0;i<3;i++){
+	input[2*i]=input[i+3]/16;
+	input[2*i+1]=input[i+3]%16;
+	}
+  output[0]=translate(input[0]*4 + input[1]/4);
+  output[1]=translate((input[1]%4)*16 + input[2]);
+  output[2]=translate(input[3]*4 + input[4]/4);
+  output[3]=translate((input[4]%4)*16 + input[5]);
 }
 
 int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
@@ -204,6 +229,30 @@ int ICACHE_FLASH_ATTR cgiMetaGetSignal(HttpdConnData *connData) {
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
   len = os_sprintf(buff, "{ \"signal\":%d}",	wifiSignalStrength(-1));
   jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
+  return HTTPD_CGI_DONE;
+}
+
+void metaHttpCallback(char * response_body, int http_status, char * response_headers, int body_size)
+{
+	os_printf("http_status=%d", http_status);
+	if (http_status != HTTP_STATUS_GENERIC_ERROR) {
+		os_printf(" strlen(headers)=%d", strlen(response_headers));
+		os_printf(" body_size=%d\n", body_size);
+		os_printf("body=%s<EOF>\n", response_body);
+	}
+}
+
+
+int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
+  char buff[1024];
+  int len;
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+ 
+  len = os_sprintf(buff, "http://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d",	wifiSignalStrength(-1));
+  metaSSID(buff+43);
+ http_get(buff, "", metaHttpCallback);
+ jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
   return HTTPD_CGI_DONE;
 }
@@ -584,36 +633,13 @@ char gethex(char c){
   return '?';
 }
 
-char translate(short i){
-  if(i<10) return i+'0';
-  if(i<36) return i-10+'a';
-  if(i<62) return i-36+'A';
-  if(i==62) return '_';
-  if(i==63) return '-';
-  return '?';
-}
-
 int ICACHE_FLASH_ATTR cgiMetaGetSSID(HttpdConnData *connData) {
-  char buff[1024];
-  int len;
+  char buff[5];
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
-  char input[6];
-  char output[5];
-	wifi_get_macaddr(1, (uint8*)input);
-  len = os_sprintf(buff,"{input:\"%02x:%02x:%02x:%02x:%02x:%02x\", ",input[0],input[1],input[2],input[3],input[4],input[5]);
-	for(int i=0;i<3;i++){
-	input[2*i]=input[i+3]/16;
-	input[2*i+1]=input[i+3]%16;
-	}
-  output[0]=translate(input[0]*4 + input[1]/4);
-  output[1]=translate((input[1]%4)*16 + input[2]);
-  output[2]=translate(input[3]*4 + input[4]/4);
-  output[3]=translate((input[4]%4)*16 + input[5]);
-  output[4]=0;
-  len += os_sprintf(buff+len,"output: \"%s\", ssid: \"META%s\"}\n",output,output);
-//  os_sprintf(buff, "{ \"signal\":%d}",	wifiSignalStrength(-1));
-  jsonHeader(connData, 200);
-  httpdSend(connData, buff, len);
+    metaSSID(buff);
+	buff[4]=0;
+jsonHeader(connData, 200);
+  httpdSend(connData, buff, 4);
   return HTTPD_CGI_DONE;
 }
 
@@ -633,3 +659,9 @@ int ICACHE_FLASH_ATTR meta_init_gpio() {
 	}
 	return r;
 }
+
+/*int ICACHE_FLASH_ATTR meta_init_pwm(){
+	uint32 io_info[][2]={{PWM_0_OUT_IO_MUX,PWM_0_OUT_IO_FUNC,PWM_0_OUT_IO_NUM},
+		{PWM_1_OUT_IO_MUX,PWM_1_OUT_IO_FUNC,PWM_1_OUT_IO_NUM}};
+	
+}*/

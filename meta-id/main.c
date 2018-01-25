@@ -74,6 +74,7 @@ should be placed above the URLs they protect.
 HttpdBuiltInUrl builtInUrls[] = {
   { "/", cgiMetaHome, NULL,0 },
 //  { "/meta.wav", cgiMetaWav, NULL ,0},
+  { "/meta/sand", cgiMetaSend, NULL,0 },
   { "/meta/userpass", cgiMetaUserPass, NULL,0 },
   { "/meta/auth", cgiMetaAuth, "/welcome.html",0 },
   { "/meta/ssid", cgiMetaGetSSID, NULL,0 },
