@@ -197,7 +197,6 @@ table{
 
 /* wifi AP selection form */
 #aps label div {
-  display: inline-block;
   margin: 0em 0.2em;
 }
 fieldset.radios {

@@ -84,6 +84,8 @@ cgiEspFsHook(HttpdConnData *connData) {
 			httpdHeader(connData, "Content-Encoding", "gzip");
 		}
 		httpdHeader(connData, "Cache-Control", "max-age=3600, must-revalidate");
+		if(connData->cgiArg != NULL)
+				httpdHeader(connData, "Set-Cookie", connData->cgiArg);
 		httpdEndHeaders(connData);
 		return HTTPD_CGI_MORE;
 	}

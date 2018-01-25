@@ -16,6 +16,7 @@ Esp8266 http server - core routines
 
 #include <esp8266.h>
 #include "httpd.h"
+#include "httpdespfs.h"
 
 //#define HTTPD_DBG
 #ifdef HTTPD_DBG
@@ -276,16 +277,18 @@ void ICACHE_FLASH_ATTR httpdRedirect(HttpdConnData *conn, char *newUrl) {
 
 // set cookie with password hash and redirect
 // if hash=0, delete cookie with date in past
-void ICACHE_FLASH_ATTR httpdCookieRedirect(HttpdConnData *conn, char *newUrl, uint32 hash) {
-  char buff[1024];
-  int l,expire;
-  connData->priv->code = 302;
+int ICACHE_FLASH_ATTR httpdSetCookie(HttpdConnData *conn, char *newUrl, uint32 hash) {
+  char buff[128];
+  int expire;
+  DBG("SetCookie : %d - redirect to %s\n", hash, newUrl);
+//  connData->priv->code = 302;
   if(hash==0)expire=1979;else expire=2024;
-  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\n"
-      "Location:  %s\r\nSet-Cookie: h=%d;Domain=%s;" 
-      "Path=/; Expires=Mon, 1 Jan %d 23:42:01 GMT; HttpOnly\r\n\r\n" 
-      "Redirecting to  %s\r\n",newUrl, hash, metahostname, expire, newUrl);
-  httpdSend(connData, buff, l);
+	os_sprintf(buff, 
+	"h=%d; path=/; expires=Mon, 1 Jan %d 23:42:01 GMT; max-age: 3600; HttpOnly\r\n", 
+      hash, expire);
+  conn->cgiArg=buff;  // QUID DE "connData->cgiData" ?????????????????,
+connData->url=newUrl;
+  return cgiEspFsHook(connData);
 }
 
 // authentication failed
@@ -564,6 +567,7 @@ static void ICACHE_FLASH_ATTR httpdRecvCb(void *arg, char *data, unsigned short 
 	conn->post->multipartBoundary = NULL;
         //Reset url data
         conn->url = NULL;
+        conn->hash=0;
         //Iterate over all received headers and parse them.
         char *p = conn->priv->head;
         while (p<(&conn->priv->head[conn->priv->headPos - 4])) {
@@ -663,6 +667,7 @@ void ICACHE_FLASH_ATTR httpdInit(HttpdBuiltInUrl *fixedUrls, char* hostname, int
 
   for (i = 0; i<MAX_CONN; i++) {
     connData[i].conn = NULL;
+    connData[i].hash = 0;
   }
   httpdConn.type = ESPCONN_TCP;
   httpdConn.state = ESPCONN_NONE;

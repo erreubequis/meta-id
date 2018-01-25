@@ -98,7 +98,7 @@ int ICACHE_FLASH_ATTR cgiMetaUserPass(HttpdConnData *connData) {
 	if (configSave()) {
 	int32 hash;
 	hash= SuperFastHash(flashConfig.user_pass);
-	httpdCookieRedirect(connData,"/welcome.html",hash);
+	return httpdSetCookie(connData,"/welcome.html",hash);
   }
   else {
     httpdStartResponse(connData, 500);
@@ -111,7 +111,7 @@ int ICACHE_FLASH_ATTR cgiMetaUserPass(HttpdConnData *connData) {
 int ICACHE_FLASH_ATTR cgiMetaLogout(HttpdConnData *connData) {
   if (connData->conn==NULL) 
 	return HTTPD_CGI_DONE;
-	httpdCookieRedirect(connData,(char*)connData->cgiArg,0);
+	httpdSetCookie(connData,(char*)connData->cgiArg,0);
   return HTTPD_CGI_DONE;
 }
 
@@ -120,7 +120,7 @@ int ICACHE_FLASH_ATTR cgiMetaCheckAuth(HttpdConnData *connData) {
   if (connData->conn==NULL) 
 	return HTTPD_CGI_DONE;
 	hash=SuperFastHash(flashConfig.user_pass);
-	DBG("META: checkAuthCgi with |%d| - |%d|\n",hash,connData->hash);
+	DBG("META: checkMetaCheckAuth |%d| - |%d|\n",hash,connData->hash);
 	if(hash==connData->hash)
 		httpdRedirect(connData,(char*)connData->cgiArg);
 	else
@@ -179,7 +179,7 @@ int ICACHE_FLASH_ATTR cgiMetaAuth(HttpdConnData *connData) {
     flashhash=SuperFastHash(flashConfig.user_pass);
 	DBG("META: auth with |%d| - |%d|[%s]\n",hash,flashhash,passwd);
 	if (hash==flashhash){
-		httpdCookieRedirect(connData, "/user.html", hash) ;
+		return httpdSetCookie(connData, "/user.html", hash) ;
 	}
 	else{
 		httpdForbidden(connData) ;
@@ -324,6 +324,7 @@ int ICACHE_FLASH_ATTR cgiMetaGpio(HttpdConnData *connData) {
 }
 
 
+#if 0
 int genSound(int* pos, char header[],int len){
     int i;
     int j;
@@ -572,3 +573,63 @@ DBG("META : sending data\n");
 }
 
 #endif
+#endif
+
+
+char gethex(char c){
+  if (c-'0'<10 && c-'0'>=0)return c-'0';
+  if (c>='a' && c<='z') return 10+c-'a';
+  if (c>='A' && c<='Z') return 10+c-'A';
+  printf ("gethex: invalid input : %d\n",c);
+  return '?';
+}
+
+char translate(short i){
+  if(i<10) return i+'0';
+  if(i<36) return i-10+'a';
+  if(i<62) return i-36+'A';
+  if(i==62) return '_';
+  if(i==63) return '-';
+  return '?';
+}
+
+int ICACHE_FLASH_ATTR cgiMetaGetSSID(HttpdConnData *connData) {
+  char buff[1024];
+  int len;
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+  char input[6];
+  char output[5];
+	wifi_get_macaddr(1, (uint8*)input);
+  len = os_sprintf(buff,"{input:\"%02x:%02x:%02x:%02x:%02x:%02x\", ",input[0],input[1],input[2],input[3],input[4],input[5]);
+	for(int i=0;i<3;i++){
+	input[2*i]=input[i+3]/16;
+	input[2*i+1]=input[i+3]%16;
+	}
+  output[0]=translate(input[0]*4 + input[1]/4);
+  output[1]=translate((input[1]%4)*16 + input[2]);
+  output[2]=translate(input[3]*4 + input[4]/4);
+  output[3]=translate((input[4]%4)*16 + input[5]);
+  output[4]=0;
+  len += os_sprintf(buff+len,"output: \"%s\", ssid: \"META%s\"}\n",output,output);
+//  os_sprintf(buff, "{ \"signal\":%d}",	wifiSignalStrength(-1));
+  jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
+  return HTTPD_CGI_DONE;
+}
+
+
+
+int ICACHE_FLASH_ATTR meta_init_gpio() {
+	int r=1;
+	if(GPIO_INPUT_GET(GPIO_ID_PIN(0))==1){
+		for(int i=0;i<42;i++){
+			os_delay_us(64000);
+			if(GPIO_INPUT_GET(GPIO_ID_PIN(0))!=1){
+				i=42;
+				r=0;
+				GPIO_OUTPUT_SET(GPIO_ID_PIN(13),i%2);
+			}
+		}
+	}
+	return r;
+}

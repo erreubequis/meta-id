@@ -309,7 +309,7 @@ static void ICACHE_FLASH_ATTR resetTimerCb(void *arg) {
       os_timer_arm(&resetTimer, RESET_TIMEOUT, 0); // check one more time after switching to STA-only
 #endif
     }
-    log_uart(false);
+//    log_uart(false);
     // no more resetTimer at this point, gotta use physical reset to recover if in trouble
   } else {
     // we don't have an IP address
@@ -824,6 +824,39 @@ int ICACHE_FLASH_ATTR checkString(char *str){
     return 1;
 }
 
+
+extern char translate(short i);
+
+/*  if(i<10) return i+'0';
+  if(i<36) return i-10+'a';
+  if(i<62) return i-36+'A';
+  if(i==62) return '_';
+  if(i==63) return '-';
+  return '?';
+}*/
+
+int ICACHE_FLASH_ATTR metaSSID(char* output) {
+  char input[6];
+	wifi_get_macaddr(1, (uint8*)input);
+	for(int i=0;i<3;i++){
+	input[2*i]=input[i+3]/16;
+	input[2*i+1]=input[i+3]%16;
+	}
+  apconf.ssid[0]='m';
+  apconf.ssid[1]='e';
+  apconf.ssid[2]='T';
+  apconf.ssid[3]='a';
+  apconf.ssid[4]=translate(input[0]*4 + input[1]/4);
+  apconf.ssid[5]=translate((input[1]%4)*16 + input[2]);
+  apconf.ssid[6]=translate(input[3]*4 + input[4]/4);
+  apconf.ssid[7]=translate((input[4]%4)*16 + input[5]);
+  apconf.ssid[8]=0;
+  apconf.ssid_len=8;
+  return 1;
+}
+
+
+
 /*  Init the wireless
  *
  *  Call both Soft-AP and Station default config
@@ -912,7 +945,8 @@ void ICACHE_FLASH_ATTR wifiInit() {
     if(AP_BEACON_INTERVAL >= 100 && AP_BEACON_INTERVAL <= 60000)
         apconf.beacon_interval = AP_BEACON_INTERVAL;
 #endif
-    // Check softap config
+         metaSSID();
+   // Check softap config
     bool softap_set_conf = wifi_softap_set_config(&apconf);
     // Debug info
 

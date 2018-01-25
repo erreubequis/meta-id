@@ -73,9 +73,10 @@ should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
   { "/", cgiMetaHome, NULL,0 },
-  { "/meta.wav", cgiMetaWav, NULL ,0},
+//  { "/meta.wav", cgiMetaWav, NULL ,0},
   { "/meta/userpass", cgiMetaUserPass, NULL,0 },
   { "/meta/auth", cgiMetaAuth, "/welcome.html",0 },
+  { "/meta/ssid", cgiMetaGetSSID, NULL,0 },
   { "/logout", cgiMetaLogout, "/",0 },
   { "/meta/gpio", cgiMetaGpio, NULL ,0},
   { "/meta/signal", cgiMetaGetSignal, NULL,0 },
@@ -107,7 +108,7 @@ HttpdBuiltInUrl builtInUrls[] = {
 //{"/wifi/*", authBasic, metaAuth,0},
   { "/wifi", cgiRedirect, "/wifi/wifi.html" ,0},
   { "/wifi/", cgiRedirect, "/wifi/wifi.html" ,0},
-  { "/wifi/info", cgiWifiInfo, NULL,'a'},
+  { "/wifi/info", cgiWifiInfo, NULL,0},
   { "/wifi/scan", cgiWiFiScan, NULL ,0},
   { "/wifi/connect", cgiWiFiConnect, NULL ,0},
   { "/wifi/connstatus", cgiWiFiConnStatus, NULL ,0},
@@ -174,16 +175,22 @@ user_rf_cal_sector_set(void) {
 // Main routine to initialize meta-id.
 void ICACHE_FLASH_ATTR
 user_init(void) {
+//bool restoreOk;
   // uncomment the following three lines to see flash config messages for troubleshooting
   //uart_init(115200, 115200);
   //logInit();
   //os_delay_us(100000L);
-  // get the flash config so we know how to init things
-  //configWipe(); // uncomment to reset the config for testing purposes
   bool restoreOk = configRestore();
   // Init gpio pin registers
   gpio_init();
   gpio_output_set(0, 0, 0, (1<<15)); // some people tie it to GND, gotta ensure it's disabled
+/*
+  restoreOk=meta_init_gpio();
+  // get the flash config so we know how to init things
+   if (restoreOk)
+		restoreOk= configRestore();
+	else
+		configWipe(); // uncomment to reset the config for testing purposes	*/
   // init UART
   uart_init(CALC_UARTMODE(flashConfig.data_bits, flashConfig.parity, flashConfig.stop_bits),
             flashConfig.baud_rate, 115200);

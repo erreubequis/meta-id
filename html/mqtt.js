@@ -65,6 +65,17 @@ function changeMqttStatus(e) {
   });
 }
 
+function changeMqttTest(e) {
+  e.preventDefault();
+  var v = document.querySelector('input[name="mqtt-test-topic"]').value;
+  ajaxSpin("POST", "/mqtt?mqtt-test-topic=" + v, function () {
+    showNotification("MQTT test settings updated");
+  }, function (s, st) {
+    showWarning("Error: " + st);
+    window.setTimeout(fetchMqtt, 100);
+  });
+}
+
 function setMqtt(name, v) {
   ajaxSpin("POST", "/mqtt?" + name + "=" + (v ? 1 : 0), function () {
     var n = name.replace("-enable", "");
