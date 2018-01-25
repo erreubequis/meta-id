@@ -11,6 +11,11 @@
 <h1>WELCOME
 </h1>
 <i> public content goes here</i><br/><br/>
+<form><button id="special-button" type="submit" class="pure-button button-primary">send data</button></form>
+<br/><br/>
+
+<a href="http://x.ikujam.org/mqtt/"> see data</a>
+<br/><br/><div id="sendfeedback"></div>
 <!--
 <a href="/meta/ssid">ssid with 4 character code</a><br/><br/>
 <a href="/user.html">protected page (... work in progress...)</a><br/><br/>
@@ -29,4 +34,21 @@ PASSWORD
 -->
 </div>
 </div>
+<script type="text/javascript">
+
+function displaySend(data){
+	$("#sendfeedback").innerHTML=data;
+	
+	}
+
+function submitData(e){  
+	e.preventDefault();
+	ajaxJson("GET", "/meta/sand", displaySend, function () {
+  });
+}
+onLoad(function() {
+  bnd($("#special-button"), "click", submitData);
+});
+</script>
+
 </body></html>

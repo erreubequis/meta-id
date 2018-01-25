@@ -250,7 +250,7 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
  
   len = os_sprintf(buff, "http://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d",	wifiSignalStrength(-1));
-  metaSSID(buff+43);
+  metaSSID(buff+41);
  http_get(buff, "", metaHttpCallback);
  jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
