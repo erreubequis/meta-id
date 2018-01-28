@@ -1,27 +1,3 @@
-//===== MQTT -> META
-
-// -> no more MQTT cards
-
-function changeMetaNOTUSED(e) {
-  e.preventDefault();
-  var url = "meta/gpio?1=1";
-  var i, inputs = document.querySelectorAll('#meta-form input');
-  for (i = 0; i < inputs.length; i++) {
-    if (inputs[i].type != "checkbox")
-      url += "&" + inputs[i].name + "=" + inputs[i].value;
-  };
-
-  hideWarning();
-  ajaxSpin("POST", url, function (resp) {
-    showNotification("meta updated");
-    removeClass(cb, 'pure-button-disabled');
-  }, function (s, st) {
-    showWarning("Error: " + st);
-    removeClass(cb, 'pure-button-disabled');
-    window.setTimeout(fetchMeta, 100);
-  });
-}
-
 function displayMeta(data) {
   Object.keys(data).forEach(function (v) {
     el = $("#" + v);
@@ -57,9 +33,6 @@ function displayMeta(data) {
 		}
     }}});
 
-/*  $("#meta-spinner").setAttribute("hidden", "");
-  $("#meta-form").removeAttribute("hidden");
-*/
 }
 
 function toggle(el){

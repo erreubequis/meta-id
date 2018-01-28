@@ -20,3 +20,4 @@ local.conf
 esp-open-sdk/
 *~
 envvars
+esphttpclient meta.wav dnsd/DNSServer.cpp

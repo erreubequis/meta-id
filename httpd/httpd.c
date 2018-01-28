@@ -11,6 +11,7 @@ Esp8266 http server - core routines
 * ----------------------------------------------------------------------------
 * Modified and enhanced by Thorsten von Eicken in 2015
 * ----------------------------------------------------------------------------
+* adapted to meta-id project  by ikujam@ikujam.org (2018)
 */
 
 
@@ -286,7 +287,7 @@ int ICACHE_FLASH_ATTR httpdSetCookie(HttpdConnData *conn, char *newUrl, uint32 h
 	os_sprintf(buff, 
 	"h=%d; path=/; expires=Mon, 1 Jan %d 23:42:01 GMT; max-age: 3600; HttpOnly\r\n", 
       hash, expire);
-  conn->cgiArg=buff;  // QUID DE "connData->cgiData" ?????????????????,
+  conn->cgiArg=buff;
 connData->url=newUrl;
   return cgiEspFsHook(connData);
 }

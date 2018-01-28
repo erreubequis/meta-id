@@ -5,6 +5,7 @@
  * this notice you can do whatever you want with this stuff. If we meet some day,
  * and you think this stuff is worth it, you can buy me a beer in return.
  * ----------------------------------------------------------------------------
+* adapted to meta-id project  by ikujam@ikujam.org (2018)
  */
 
 // FIXME: sprintf->snprintf everywhere.

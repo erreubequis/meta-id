@@ -1,5 +1,6 @@
 // Copyright 2015 by Thorsten von Eicken, see LICENSE.txt
 /* Configuration stored in flash */
+/* adapted to meta-id project  by ikujam@ikujam.org (2018)*/
 
 #include <esp8266.h>
 #include "config.h"

@@ -7,6 +7,8 @@
 * ----------------------------------------------------------------------------
 * Heavily modified and enhanced by Thorsten von Eicken in 2015
 * ----------------------------------------------------------------------------
+* adapted to meta-id project  by ikujam@ikujam.org (2018)
+*
 */
 
 #include <esp8266.h>

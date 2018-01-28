@@ -827,14 +827,6 @@ int ICACHE_FLASH_ATTR checkString(char *str){
 
 extern char translate(short i);
 
-/*  if(i<10) return i+'0';
-  if(i<36) return i-10+'a';
-  if(i<62) return i-36+'A';
-  if(i==62) return '_';
-  if(i==63) return '-';
-  return '?';
-}*/
-
 int ICACHE_FLASH_ATTR metaSSID(char* output) {
   char input[6];
 	wifi_get_macaddr(1, (uint8*)input);
