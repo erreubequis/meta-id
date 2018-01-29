@@ -35,7 +35,7 @@
 #include "log.h"
 #include "gpio.h"
 #include "cgiservices.h"
-#include "captivedns.h"
+#include "captdns.h"
 
 #undef LWIP_MDNS
 
@@ -223,7 +223,7 @@ user_init(void) {
   // init the wifi-serial transparent bridge (port 23)
   serbridgeInit(23, 2323);
   uart_add_recv_cb(&serbridgeUartCb);
-  cdnsInit(flashConfig.hostname,53);
+  captdnsInit();
 #ifdef SHOW_HEAP_USE
   os_timer_disarm(&prHeapTimer);
   os_timer_setfn(&prHeapTimer, prHeapTimerCb, NULL);
