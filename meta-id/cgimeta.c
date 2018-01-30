@@ -31,6 +31,7 @@
 
 char MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
 
+static uint32 systime, rtctime;
 
 void ICACHE_FLASH_ATTR cgiMetaInit() {
   for (int i=0; i<16; i++) {
@@ -86,7 +87,8 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
       "\"mqtt\": \"%s/%s\", "
       "\"baud\": \"%d\", "
       "\"pass\": \"%s\", "
-      "\"description\": \"%s\""
+      "\"description\": \"%s\","
+      "\"voltage\": \"%1.6f\""
     " }",
     flashConfig.hostname,
     rst_info->reason,
@@ -100,7 +102,8 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
     mqttState(),
     flashConfig.baud_rate,
     flashConfig.user_pass,
-    flashConfig.sys_descr
+    flashConfig.sys_descr,
+    system_adc_read()/1024.0
     );
 
   jsonHeader(connData, 200);
@@ -246,7 +249,8 @@ void metaHttpCallback(char * response_body, int http_status, char * response_hea
 	if (http_status != HTTP_STATUS_GENERIC_ERROR) {
 		os_printf(" strlen(headers)=%d", strlen(response_headers));
 		os_printf(" body_size=%d\n", body_size);
-		os_printf("body=%s<EOF>\n", response_body);
+//		os_printf("body=%s<EOF>\n", response_body);
+		os_printf("duration %d / rtc : %d\n",system_get_time()-systime,system_get_rtc_time()-rtctime);
 	}
 }
 
@@ -261,6 +265,23 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
  http_get(buff, "", metaHttpCallback);
  jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
+  systime=system_get_time();
+  rtctime=system_get_rtc_time();
+  return HTTPD_CGI_DONE;
+}
+
+
+int ICACHE_FLASH_ATTR cgiMetaFetch(HttpdConnData *connData) {
+  char buff[1024];
+  int len;
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+ 
+  len = os_sprintf(buff, "http://x.ikujam.org/random.bin");
+ http_get(buff, "", metaHttpCallback);
+ jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
+  systime=system_get_time();
+  rtctime=system_get_rtc_time();
   return HTTPD_CGI_DONE;
 }
 
@@ -394,6 +415,16 @@ int ICACHE_FLASH_ATTR cgiMetaGetSSID(HttpdConnData *connData) {
 	buff[4]=0;
 jsonHeader(connData, 200);
   httpdSend(connData, buff, 4);
+  return HTTPD_CGI_DONE;
+}
+
+int ICACHE_FLASH_ATTR cgiMetaGetTimers(HttpdConnData *connData) {
+  char buff[1024];
+  int len;
+  if (connData->conn==NULL) return HTTPD_CGI_DONE;
+	len=os_sprintf(buff,"{\"sys\":%d;\"rtc\":%d}",systime,rtctime);
+jsonHeader(connData, 200);
+  httpdSend(connData, buff, len);
   return HTTPD_CGI_DONE;
 }
 

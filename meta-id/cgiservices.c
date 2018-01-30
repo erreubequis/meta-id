@@ -122,7 +122,7 @@ int ICACHE_FLASH_ATTR cgiServicesInfo(HttpdConnData *connData) {
       "\"syslog_showdate\": \"%s\", "
 #endif
       "\"timezone_offset\": %d, "
-      "\"sntp_server\": \"%s\", "
+      "\"sntp_server\": \"%s\" "
 //      "\"mdns_enable\": \"%s\", "
 //      "\"mdns_servername\": \"%s\""
     " }",
