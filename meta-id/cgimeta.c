@@ -53,7 +53,7 @@ char ICACHE_FLASH_ATTR translate(short i){
 // generate ssid from the last 6 hex charcters of mac
 // 6 hex <=> 2**(4*6) = 64**4 <=> 4 "base64"
 
-static void ICACHE_FLASH_ATTR metaSSID(char* output){
+void ICACHE_FLASH_ATTR metaSSID(char* output){
   char input[6];
 	wifi_get_macaddr(1, (uint8*)input);
 	for(int i=0;i<3;i++){

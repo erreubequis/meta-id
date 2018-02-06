@@ -30,6 +30,8 @@ Cgi/template routines for the /wifi url.
 # define VERS_STR_STR(V) #V
 # define VERS_STR(V) VERS_STR_STR(V)
 
+extern int metaSSID(char*);
+
 
 // ===== wifi status change callbacks
 static WifiStateChangeCb wifi_state_change_cb[4];
@@ -825,29 +827,6 @@ int ICACHE_FLASH_ATTR checkString(char *str){
 }
 
 
-extern char translate(short i);
-
-int ICACHE_FLASH_ATTR metaSSID(char* output) {
-  char input[6];
-	wifi_get_macaddr(1, (uint8*)input);
-	for(int i=0;i<3;i++){
-	input[2*i]=input[i+3]/16;
-	input[2*i+1]=input[i+3]%16;
-	}
-  apconf.ssid[0]='m';
-  apconf.ssid[1]='e';
-  apconf.ssid[2]='T';
-  apconf.ssid[3]='a';
-  apconf.ssid[4]=translate(input[0]*4 + input[1]/4);
-  apconf.ssid[5]=translate((input[1]%4)*16 + input[2]);
-  apconf.ssid[6]=translate(input[3]*4 + input[4]/4);
-  apconf.ssid[7]=translate((input[4]%4)*16 + input[5]);
-  apconf.ssid[8]=0;
-  apconf.ssid_len=8;
-  return 1;
-}
-
-
 
 /*  Init the wireless
  *
@@ -895,7 +874,14 @@ void ICACHE_FLASH_ATTR wifiInit() {
     if(checkString(VERS_STR(AP_SSID)) && ssidlen > 7 && ssidlen < 32){
         // Clean memory and set the value of SSID
         os_memset(apconf.ssid, 0, 32);
-        os_memcpy(apconf.ssid, VERS_STR(AP_SSID), os_strlen(VERS_STR(AP_SSID)));
+		if(os_strcmp(VERS_STR(AP_SSID), "metaNNNN") == 0) {
+			char buff[8];
+			os_sprintf(buff,"metaNNNN");
+			metaSSID(buff+4);
+		}
+		else{
+			os_memcpy(apconf.ssid, VERS_STR(AP_SSID), os_strlen(VERS_STR(AP_SSID)));
+		}
         // Specify the length of ssid
         apconf.ssid_len= ssidlen;
 #if defined(AP_PASS)
@@ -937,7 +923,6 @@ void ICACHE_FLASH_ATTR wifiInit() {
     if(AP_BEACON_INTERVAL >= 100 && AP_BEACON_INTERVAL <= 60000)
         apconf.beacon_interval = AP_BEACON_INTERVAL;
 #endif
-         metaSSID();
    // Check softap config
     bool softap_set_conf = wifi_softap_set_config(&apconf);
     // Debug info

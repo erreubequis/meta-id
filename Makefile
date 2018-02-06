@@ -39,6 +39,9 @@
 # AP_SSID_HIDDEN ?=0
 # AP_MAX_CONN ?=4
 # AP_BEACON_INTERVAL ?=100
+AP_SSID ?=metaNNNN
+AP_PASS ?=
+AP_AUTH_MODE ?=0
 
 # If CHANGE_TO_STA is set to "yes" the meta-id module will switch to station mode
 # once successfully connected to an access point. Else it will stay in STA+AP mode.
