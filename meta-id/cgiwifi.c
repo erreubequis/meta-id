@@ -878,6 +878,7 @@ void ICACHE_FLASH_ATTR wifiInit() {
 			char buff[8];
 			os_sprintf(buff,"metaNNNN");
 			metaSSID(buff+4);
+			os_memcpy(apconf.ssid, buff, 8);
 		}
 		else{
 			os_memcpy(apconf.ssid, VERS_STR(AP_SSID), os_strlen(VERS_STR(AP_SSID)));
