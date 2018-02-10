@@ -1,9 +1,9 @@
 @charset "utf-8";
  @font-face {
-	font-family: 'Lato-Regular';
-	src: url("/fonts/Lato-Regular.ttf");
+	font-family: 'Lato';
+	src: url("/fonts/Lato-Embed.ttf");
 }
-
+/*
  @font-face {
 	font-family: 'Lato-Black';
 	src: url("/fonts/Lato-Black.ttf");
@@ -42,9 +42,9 @@
 	font-family: 'Lato-LightItalic';
 	src: url("/fonts/Lato-LightItalic.ttf");
 }
-
+*/
 body {
-	font-family: 'Lato-Regular', Fallback, sans-serif;
+	font-family: 'Lato', Fallback, sans-serif;
 	color: #3e0694;
 	line-height: 155%;
 	margin-left: 25%;
@@ -54,26 +54,26 @@ body {
 }
 	
 .headerlogo2 {
-	font-family: Lato-Black;
+	font-family: Lato;
 	font-size: 400%;
 	color: #3e0694;
 }
  .menuwelcome {
-	font-family: Lato-Bold;
+	font-family: Lato;
 	font-size: medium;
 	margin-left: 8%;
 }
  body,td,th {
-	font-family: Lato-Regular, Fallback, sans-serif;
+	font-family: Lato, Fallback, sans-serif;
 }
 .black200percent {
-	font-family: Lato-Black;
+	font-family: Lato;
 	font-size: 200%;
 	padding-right: 15%;
 	line-height: 145%;
 }
 .bold150percent {
-	font-family: Lato-Bold;
+	font-family: Lato;
 	font-size: 150%;
 	padding-right: 15%;
 	line-height: 145%;
@@ -85,7 +85,7 @@ body {
 
 
 .black200percentcapitalize {
-	font-family: Lato-Black;
+	font-family: Lato;
 	font-size: 200%;
 	padding-right: 15%;
 	line-height: 145%;
@@ -95,7 +95,7 @@ body {
 	font-size: small;
 }
 .footnotebold {
-	font-family: Lato-Bold;
+	font-family: Lato;
 	font-size: small;
 }
 
@@ -103,33 +103,32 @@ body {
 
 
 .hairline200percent {
-	font-family: Lato-Hairline;
+	font-family: Lato;
 	line-height: 145%;
 	padding-right: 15%;
 	font-size: 200%;
 }
 
 .italic {
-	font-family: Lato-Italic;
+	font-family: Lato;
 }
 .bold {
-	font-family: Lato-Bold;
+	font-family: Lato;
 }
 .loginbox {
 	display: inline-block;
 	width: 50%;
 	height: 2em;
 	border: 1px solid #3e0694;
-	;
-	font-family: Lato-Regular;
+	font-family: Lato;
 }
 
 .loginboxtext {
-	font-family: Lato-Regular;
+	font-family: Lato;
 	vertical-align: -30%;
 }
 .submitboxtext2 {
-	font-family: Lato-Bold;
+	font-family: Lato;
 	color: #FFF;
 	background-color: #3e0694;
 	display: inline;

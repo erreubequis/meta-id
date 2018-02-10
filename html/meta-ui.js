@@ -567,8 +567,6 @@ function setPass(e){
       showNotification(resp);
     }, function(s, st) {
       showWarning("Error setting password: "+st);
-      cb.className = cn;
-      window.setTimeout(scanAPs, 1000);
     });
 
 }
