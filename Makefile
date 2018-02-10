@@ -138,6 +138,7 @@ YUI_COMPRESSOR ?= yuicompressor-2.4.8.jar
 HTML_PATH = $(abspath ./html)/
 WIFI_PATH = $(HTML_PATH)wifi/
 TEXT_PATH = $(HTML_PATH)text/
+FONT_PATH = $(HTML_PATH)fonts/
 
 ESP_FLASH_MAX       ?= 503808  # max bin file
 
@@ -430,12 +431,13 @@ $(BUILD_BASE)/espfs_img.o: tools/$(HTML_COMPRESSOR)
 endif
 
 $(BUILD_BASE)/espfs_img.o: html/ html/wifi/ html/text/ espfs/mkespfsimage/mkespfsimage
-	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/wifi; mkdir html_compressed/text;
+	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/wifi; mkdir html_compressed/text;mkdir html_compressed/text;
 	$(Q) cp -r html/*.ico html_compressed;
 	$(Q) cp -r html/*.css html_compressed;
 	$(Q) cp -r html/*.js html_compressed;
 	$(Q) cp -r html/wifi/*.png html_compressed/wifi;
 	$(Q) cp -r html/wifi/*.js html_compressed/wifi;
+	$(Q) cp -r html/fonts/*.ttf html_compressed/fonts;
 ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	$(Q) echo "Compressing assets with htmlcompressor. This may take a while..."
 	$(Q) java -jar tools/$(HTML_COMPRESSOR) \

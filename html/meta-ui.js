@@ -370,13 +370,13 @@ function setEditToClick(klass, value) {
 //===== Notifications
 
 function showWarning(text) {
-  var el = $("#warning");
+  var el = $("#notification");
   el.innerHTML = text;
   el.removeAttribute('hidden');
   window.scrollTo(0, 0);
 }
 function hideWarning() {
-  el = $("#warning").setAttribute('hidden', '');
+  el = $("#notification").setAttribute('hidden', '');
 }
 var notifTimeout = null;
 function showNotification(text) {
@@ -557,6 +557,20 @@ if (del.visibility != 'hidden')
 del.visibility = 'hidden';
 else
 del.visibility = 'visible';
+}
+
+function setPass(e){
+	e.preventDefault();
+	showNotification("setting password...");
+  var url = "/meta/userpass?passwd="+$("#passwd").value;
+  ajaxSpin("GET", url, function(resp) {
+      showNotification(resp);
+    }, function(s, st) {
+      showWarning("Error setting password: "+st);
+      cb.className = cn;
+      window.setTimeout(scanAPs, 1000);
+    });
+
 }
 
 /**

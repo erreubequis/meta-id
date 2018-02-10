@@ -1,43 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>META</title>
-<style>
-body { 
-  font-family: sans-serif;
-}
-</style>
-<link href="META.css" rel="stylesheet" type="text/css">
-<style type="text/css">
-a:link {
-	color: #3e0694;
-	text-decoration: none;
-}
-a:visited {
-	color: #3e0694;
-	text-decoration: none;
-}
-a:hover {
-	color: #3e0694;
-	text-decoration: none;
-}
-a:active {
-	color: #000;
-	text-decoration: none;
-}
-</style>
-<meta charset="utf-8">
-</head>
-<body text="#3e0694">
-
 <p class="headerlogo2">META</p>
 <p><span class="menuwelcome">LOGIN</span><br>
-
+<div id="loginform">
+<form action="/meta/userpass" id="passform" class="pure-form">
 <p><br>
 Set/Enter your personal password here
-<p class="loginbox"> <span class="loginboxtext">&nbsp;... </span></span><p>
+<p class="loginbox"><input type="password" name="passwd" id="passwd"/><p>
 <p class="submitboxtext2">
-  
-  Submit
+<a id="special-button"  class="pure-button button-primary">Submit</a>
+</form>  
+</div>
+<script type="text/javascript">
+onLoad(function() {
+  bnd($("#special-button"), "click", setPass);
+});
+</script>
 </body>
 </html>

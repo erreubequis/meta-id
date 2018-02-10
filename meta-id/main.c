@@ -74,7 +74,7 @@ general ones. Authorization things (like authBasic) act as a 'barrier' and
 should be placed above the URLs they protect.
 */
 HttpdBuiltInUrl builtInUrls[] = {
-  { "/", cgiMetaHome, NULL,0 },
+  { "/", cgiMetaHome, NULL,0 }, // if password set : /welcome.html else /init.html
 //  { "/meta.wav", cgiMetaWav, NULL ,0},
   { "/meta/sand", cgiMetaSend, NULL,0 },
   { "/meta/fetch", cgiMetaFetch, NULL,0 },

@@ -477,6 +477,7 @@ static void ICACHE_FLASH_ATTR httpdParseHeader(char *h, HttpdConnData *conn) {
     i = 0;
     while (h[i] != ' ') i++;
     conn->url = h + i + 1;
+    conn->hash=0;
 
     //Figure out end of url.
     e = (char*)os_strstr(conn->url, " ");

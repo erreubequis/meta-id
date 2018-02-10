@@ -1,13 +1,10 @@
-<!doctype html>
-<html><head>
-  <title>meta-id</title>
-<!--  <link rel="stylesheet" href="/pure.css">
-  <link rel="stylesheet" href="/style.css">-->
-  <link rel="stylesheet" href="/meta.css">
-  <link rel="stylesheet" href="/extra.css">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="/meta-ui.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+<title>META</title>
+<script src="/meta-ui.js"></script>
+<link href="META.css" rel=stylesheet type="text/css">
+<meta charset="utf-8">
 </head>
 <body>
-<div id="layout">
+<div id="notification"></div>
