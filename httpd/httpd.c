@@ -292,6 +292,21 @@ connData->url=newUrl;
   return cgiEspFsHook(connData);
 }
 
+int ICACHE_FLASH_ATTR httpdSendAuthCookie(HttpdConnData *conn, uint32 hash) {
+  char buff[1024];
+  int expire;
+  int l;
+  DBG("SendAuthCookie : %d\n", hash);
+//  connData->priv->code = 302;
+  if(hash==0)expire=1979;else expire=2024;
+  conn->priv->code = 302;
+  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: esp8266-link\r\nConnection: close\r\n"
+      "Set-Cookie: h=%d; path=/; expires=Mon, 1 Jan %d 23:42:01 GMT; max-age: 3600; HttpOnly\r\n"
+      "Location: /meta/auth\r\n\r\nRedirecting to /meta/auth\r\n", hash, expire);
+  httpdSend(conn, buff, l);
+  return HTTPD_CGI_DONE;
+}
+
 // authentication failed
 void ICACHE_FLASH_ATTR httpdForbidden(HttpdConnData *conn) {
   char buff[1024];

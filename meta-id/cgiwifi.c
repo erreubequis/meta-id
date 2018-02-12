@@ -874,11 +874,11 @@ void ICACHE_FLASH_ATTR wifiInit() {
     if(checkString(VERS_STR(AP_SSID)) && ssidlen > 7 && ssidlen < 32){
         // Clean memory and set the value of SSID
         os_memset(apconf.ssid, 0, 32);
-		if(os_strcmp(VERS_STR(AP_SSID), "metaNNNN") == 0) {
-			char buff[8];
-			os_sprintf(buff,"metaNNNN");
-			metaSSID(buff+4);
-			os_memcpy(apconf.ssid, buff, 8);
+		if(os_strcmp(VERS_STR(AP_SSID), ".META_NNNN") == 0) {
+			char buff[10];
+			os_sprintf(buff,".META_NNNN");
+			metaSSID(buff+6);
+			os_memcpy(apconf.ssid, buff, 10);
 		}
 		else{
 			os_memcpy(apconf.ssid, VERS_STR(AP_SSID), os_strlen(VERS_STR(AP_SSID)));

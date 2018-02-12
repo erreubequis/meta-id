@@ -163,14 +163,12 @@ a:active {
 
 
 #notification {
-  position: absolute;
-  left: 25%;
-  width: 50%;
+  float:right;
+	width:36%;
   top: 10;
   z-index: 200;
   font-size: 110%;
   text-align: center;
-  background-color: #693;
-  color: #cfc;
-  padding: 0.1em 0.4em;
+  background-color: #3e0694;
+  color: white;
 }

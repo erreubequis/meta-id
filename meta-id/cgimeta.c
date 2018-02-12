@@ -39,6 +39,8 @@ void ICACHE_FLASH_ATTR cgiMetaInit() {
 	}
 }
 
+static char *connStatuses[] = { "idle", "connecting", "wrong password", "AP not found",
+                         "failed", "got IP address" };
 
 // translate an integer into "base 64" : [0-9a-zA-Z_-] -> 64 characters
 char ICACHE_FLASH_ATTR translate(short i){
@@ -200,27 +202,47 @@ int ICACHE_FLASH_ATTR cgiMetaAuth(HttpdConnData *connData) {
 	int32 hash, flashhash;
 	int8 pl;
 	char passwd[USER_PASS_LENGTH];
+	char buff[1024];
 	memset(passwd,0,USER_PASS_LENGTH);
-	DBG("META: auth...\n");
 	if (connData->conn==NULL) 
 		return HTTPD_CGI_DONE;
+    flashhash=SuperFastHash(flashConfig.user_pass);
 	pl = 0;
 	pl|=getStringArg(connData, "passwd", passwd, USER_PASS_LENGTH);
-	if (pl<0){
-		DBG("META: auth failed to retrieve password !\n");
+	DBG("META: auth...%d - %s\n",pl,passwd);
+	if (pl<=0){
+		if(connData->hash==flashhash){
+			jsonHeader(connData, 200);
+			os_sprintf(buff,"{\"state\":1,\"msg\":\"Login success\"}");
+			httpdSend(connData, buff, -1);
+		}
+		else{
+			jsonHeader(connData, 401);
+			os_sprintf(buff,"{\"state\":0,\"msg\":\"Login refused\"}");
+			httpdSend(connData, buff, -1);
+		}
 		return HTTPD_CGI_DONE;
 	}
 	hash= SuperFastHash(passwd);
-    flashhash=SuperFastHash(flashConfig.user_pass);
 	DBG("META: auth with |%d| - |%d|[%s]\n",hash,flashhash,passwd);
 	if (hash==flashhash){
-		return httpdSetCookie(connData, "/user.html", hash) ;
+//			return httpdSetCookie(connData, "/meta/auth", hash) ;
+		if(connData->hash==0){
+			httpdSendAuthCookie(connData,hash);
+		}
+		else{
+			jsonHeader(connData, 200);
+			os_sprintf(buff,"{\"state\":2,\"msg\":\"Login success\"}");
+			httpdSend(connData, buff, -1);
+		}
 	}
 	else{
-		httpdForbidden(connData) ;
+		int l = os_sprintf(buff, "HTTP/1.0 401 Forbidden\r\nServer: meta-id\r\nConnection: close\r\n"
+      "Set-Cookie: h=0; path=/; expires=Mon, 1 Jan 1979 23:42:01 GMT; max-age: 3600; HttpOnly"
+      "\r\n\r\n{\"state\":0,\"msg\":\"Login refused\"}\r\n");
+		httpdSend(connData, buff, l);
 	}
-  return HTTPD_CGI_DONE;
-
+	return HTTPD_CGI_DONE;
 }
 
 int ICACHE_FLASH_ATTR cgiMetaHome(HttpdConnData *connData) {
@@ -444,6 +466,66 @@ int ICACHE_FLASH_ATTR meta_init_gpio() {
 	}
 	return r;
 }
+/**
+ * -1 : unknown, waiting for authentication
+ *  0 : login box // if no wifi config and no auth
+ *  1 : login success // if auth ok
+ *  2 : wifi config // if no wifi connection and on request
+ *  3 : connecting //                                                                                                                                                                                                                                                                                                                                                                                                 
+ *  4 : connected
+ * "idle", "connecting", "wrong password", "AP not found","failed", "got IP address"
+ **/
+int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) {
+	char buff[512];
+	char *msg;
+	int auth=0;
+    int state = wifi_station_get_connect_status();
+	int32 hash=SuperFastHash(flashConfig.user_pass);
+	int len;
+	DBG("META: checkMetaCheckAuth |%d| - |%d|\n",hash,connData->hash);
+	if (hash==connData->hash)
+		auth=1;
+    if (state >= 0 && state < sizeof(connStatuses)) {
+		msg = connStatuses[state];
+		switch(state){
+			case 0:
+				state=-1;
+				break;
+			case 1:
+				state=3;
+				break;
+			case 2:
+				break;
+			case 3:
+			case 4:
+				if(auth)
+					state=2;
+				else
+					state=0;
+				break;
+			case 5:
+				state=4;
+				break;
+		}
+	}
+	else{
+		if(auth){
+			state=2;
+			msg="wifi config";
+		}
+		else{
+			state=-1;
+			msg="unknown";
+		}
+	}
+	len=os_sprintf(buff,"{\"state\":%d,\"msg\":\"%s\"}",state,msg);
+	jsonHeader(connData, 200);
+	httpdSend(connData, buff, len);
+	return HTTPD_CGI_DONE;
+}
+
+
+
 
 /*int ICACHE_FLASH_ATTR meta_init_pwm(){
 	uint32 io_info[][2]={{PWM_0_OUT_IO_MUX,PWM_0_OUT_IO_FUNC,PWM_0_OUT_IO_NUM},

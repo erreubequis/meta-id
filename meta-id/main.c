@@ -77,6 +77,7 @@ HttpdBuiltInUrl builtInUrls[] = {
   { "/", cgiMetaHome, NULL,0 }, // if password set : /welcome.html else /init.html
 //  { "/meta.wav", cgiMetaWav, NULL ,0},
   { "/meta/sand", cgiMetaSend, NULL,0 },
+  { "/meta/state", cgiMetaState, NULL,0 },
   { "/meta/fetch", cgiMetaFetch, NULL,0 },
   { "/meta/gettimers", cgiMetaGetTimers, NULL,0 },
   { "/meta/userpass", cgiMetaUserPass, NULL,0 },

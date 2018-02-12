@@ -485,16 +485,6 @@ function setPins(ev) {
   });
 }
 
-/**
- * -1 : unknown, waiting for ajax call with config
- *  0 : ask for config
- *  1 : connecting
- *  2 : connected
- **/
-var curState=-1;
-var lastState=-1;
-var wifiInfo=null;
-
 function loadWifiInfo(data){
 		showWifiInfo(data);
 		wifiInfo=data;
@@ -513,19 +503,17 @@ function loadWifiInfo(data){
        stateMachine();
 }
 
-function stateMachine () {
-	if(lastState!=curState){
-		for(i=-1;i<3;i++){
-			del=$("#state-"+i);
-			del.setAttribute('hidden','');
-		}
-		del=$("#state-"+curState);
-		del.removeAttribute('hidden');
-	}
-	lastState=curState;
-	ajaxJson('GET', "/wifi/info", loadWifiInfo,
-      function(s, st) { window.setTimeout(stateMachine, 2000); });
-}
+/**
+ * -1 : unknown, waiting for authentication
+ *  0 : login box // if no wifi config and no auth
+ *  1 : login success // if auth ok
+ *  2 : wifi config // if no wifi connection and on request
+ *  3 : connecting //                                                                                                                                                                                                                                                                                                                                                                                                 
+ *  4 : connected
+ **/
+var curState=-1;
+var lastState=-2
+var wifiInfo=null;
 
 
 function resetWifiAp(e) {
@@ -569,6 +557,50 @@ function setPass(e){
       showWarning("Error setting password: "+st);
     });
 
+}
+
+
+function restartSM(resp){
+	stateMachine(resp);
+}
+
+function stateMachine (resp) {
+  try { jrep = JSON.parse(resp); }
+  catch(err) {
+    console.log("JSON parse error: " + err + ". In: " + resp);
+    jrep['state']=-1;
+    jrep['msg']="not initialized";
+//    err_cb(500, "JSON parse error: " + err);
+//    return;
+  }
+	curState=jrep['state'];
+	if(lastState!=curState){
+	showNotification(jrep['msg']);
+		for(i=-1;i<5;i++){
+			del=$("#state-"+i);
+			del.setAttribute('hidden','');
+		}
+		del=$("#state-"+curState);
+		del.removeAttribute('hidden');
+	}
+	lastState=curState;
+	if(curState== 1 || curState == 3){
+		window.setTimeout(function (){ajaxReq('GET', "/meta/state", stateMachine)}, 2000);
+	}
+}
+
+function loginSuccess(resp){
+	stateMachine(resp);
+}
+
+function loginFail(s,st){
+	stateMachine(st);
+}
+
+function submitPass(e){
+	e.preventDefault();
+ajaxReq('GET', "/meta/auth?passwd="+$("#passwd").value,
+	loginSuccess,loginFail);
 }
 
 /**

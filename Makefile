@@ -39,7 +39,7 @@
 # AP_SSID_HIDDEN ?=0
 # AP_MAX_CONN ?=4
 # AP_BEACON_INTERVAL ?=100
-AP_SSID ?=metaNNNN
+AP_SSID ?=.META_NNNN
 AP_PASS ?=
 AP_AUTH_MODE ?=0
 
@@ -431,11 +431,12 @@ $(BUILD_BASE)/espfs_img.o: tools/$(HTML_COMPRESSOR)
 endif
 
 $(BUILD_BASE)/espfs_img.o: html/ html/wifi/ html/text/ espfs/mkespfsimage/mkespfsimage
-	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/wifi; mkdir html_compressed/text;mkdir html_compressed/fonts;
+#	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/wifi; mkdir html_compressed/text;mkdir html_compressed/fonts;
+	$(Q) rm -rf html_compressed; mkdir html_compressed; mkdir html_compressed/text;mkdir html_compressed/fonts;
 	$(Q) cp -r html/*.ico html_compressed;
 	$(Q) cp -r html/*.css html_compressed;
 	$(Q) cp -r html/*.js html_compressed;
-	$(Q) cp -r html/wifi/*.js html_compressed/wifi;
+#	$(Q) cp -r html/wifi/*.js html_compressed/wifi;
 	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
 ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	$(Q) echo "Compressing assets with htmlcompressor. This may take a while..."
@@ -448,10 +449,10 @@ ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	  -t html --remove-surrounding-spaces max --remove-quotes --remove-intertag-spaces \
 	  -o $(abspath ./html_compressed)/text/ \
 	  $(TEXT_PATH)*.html
-	$(Q) java -jar tools/$(HTML_COMPRESSOR) \
-	  -t html --remove-surrounding-spaces max --remove-quotes --remove-intertag-spaces \
-	  -o $(abspath ./html_compressed)/wifi/ \
-	  $(WIFI_PATH)*.html
+#	$(Q) java -jar tools/$(HTML_COMPRESSOR) \
+#	  -t html --remove-surrounding-spaces max --remove-quotes --remove-intertag-spaces \
+#	  -o $(abspath ./html_compressed)/wifi/ \
+#	  $(WIFI_PATH)*.html
 	$(Q) echo "Compressing assets with yui-compressor. This may take a while..."
 	$(Q) for file in `find html_compressed -type f -name "*.js"`; do \
 	    java -jar tools/$(YUI_COMPRESSOR) $$file --line-break 0 -o $$file; \
@@ -463,7 +464,7 @@ else
 	$(Q) cp -r html/head- html_compressed;
 	$(Q) cp -r html/*.html html_compressed;
 	$(Q) cp -r html/text/*.html html_compressed/text;	
-	$(Q) cp -r html/wifi/*.html html_compressed/wifi;	
+#	$(Q) cp -r html/wifi/*.html html_compressed/wifi;	
 endif
 ifeq (,$(findstring mqtt,$(MODULES)))
 	$(Q) rm -rf html_compressed/mqtt.html

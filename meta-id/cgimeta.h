@@ -20,7 +20,7 @@ int cgiMetaGetSSID(HttpdConnData *connData);
 int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) ;
 int ICACHE_FLASH_ATTR cgiMetaFetch(HttpdConnData *connData) ;
 int ICACHE_FLASH_ATTR cgiMetaGetTimers(HttpdConnData *connData) ;
-
+int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) ;
 extern char* rst_codes[7];
 extern char* flash_maps[7];
 extern char MetaLimen[16];
