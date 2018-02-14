@@ -16,13 +16,57 @@ Set/Enter your personal password here
 <div id="state-2" hidden><a href="/wifi.html">wifi configuration</a></div>
 <div id="state-3" hidden>connecting</div>
 <div id="state-4" hidden>connected</div>
+<div id="ledcontrol">            <div id="gpio">
+                <label>GPIO 0</label>
+                <div id="meta-gpio-00"></div>
+                <label>GPIO 1</label>
+                <div id="meta-gpio-01"></div>
+                <label>GPIO 2</label>
+                <div id="meta-gpio-02"></div>
+                <label>GPIO 3</label>
+                <div id="meta-gpio-03"></div>
+                <label>GPIO 4</label>
+                <div id="meta-gpio-04"></div>
+                <label>GPIO 5</label>
+                <div id="meta-gpio-05"></div>
+<!--                <label>GPIO 6</label>
+                <div id="meta-gpio-06"></div>
+                <label>GPIO 7</label>
+                <div id="meta-gpio-07"></div>
+                <label>GPIO 8</label>
+                <div id="meta-gpio-08"></div>-->
+                <label>GPIO 9</label>
+                <div id="meta-gpio-09"></div>
+                <label>GPIO 10</label>
+                <div id="meta-gpio-10"></div>
+<!--                <label>GPIO 11</label>
+                <div id="meta-gpio-11"></div>-->
+                <label>GPIO 12</label>
+                <div id="meta-gpio-12"></div>
+                <label>GPIO 13</label>
+                <div id="meta-gpio-13"></div>
+                <label>GPIO 14</label>
+                <div id="meta-gpio-14"></div>
+                <label>GPIO 15</label>
+                <div id="meta-gpio-15"></div>
+              </div>
+<button id="ledbutton"  class="led">LED</button></div>
 </div>.
 <script type="text/javascript">
 onLoad(function() {
   bnd($("#passform"), "submit", submitPass);
+  bnd($("#ledbutton"), "click", ledControl);
   bnd($("#loginbox"), "click", function(e){stateMachine('{"state":0,"msg":"login"}')});
+  fetchMeta();
   stateMachine('{"state":-1,"msg":"init"}');
 });
+function toggle(el){
+	del=$("#"+el);
+	if (del.visibility != 'hidden')
+		del.visibility != 'hidden';
+	else
+	del.visibility = 'visible';
+}
 </script>
 </body>
 </html>

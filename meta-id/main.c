@@ -83,7 +83,7 @@ HttpdBuiltInUrl builtInUrls[] = {
   { "/meta/userpass", cgiMetaUserPass, NULL,0 },
   { "/meta/auth", cgiMetaAuth, "/welcome.html",0 },
   { "/meta/ssid", cgiMetaGetSSID, NULL,0 },
-  { "/logout", cgiMetaLogout, "/",0 },
+  { "/logout", cgiMetaLogout, "/",'a' },
   { "/meta/gpio", cgiMetaGpio, NULL ,0},
   { "/meta/signal", cgiMetaGetSignal, NULL,0 },
   { "/meta/dump", cgiMetaDump, NULL,0 },

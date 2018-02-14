@@ -172,3 +172,12 @@ a:active {
   background-color: #3e0694;
   color: white;
 }
+
+.led{
+	border:2px solid black;
+	background-color:red;
+}
+
+.led .active{
+	background-color:green;
+}
