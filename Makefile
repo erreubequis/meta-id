@@ -437,7 +437,7 @@ $(BUILD_BASE)/espfs_img.o: html/ html/wifi/ html/text/ espfs/mkespfsimage/mkespf
 	$(Q) cp -r html/*.css html_compressed;
 	$(Q) cp -r html/*.js html_compressed;
 #	$(Q) cp -r html/wifi/*.js html_compressed/wifi;
-	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
+#	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
 ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	$(Q) echo "Compressing assets with htmlcompressor. This may take a while..."
 	$(Q) java -jar tools/$(HTML_COMPRESSOR) \
