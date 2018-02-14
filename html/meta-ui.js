@@ -380,6 +380,7 @@ function hideWarning() {
 }
 var notifTimeout = null;
 function showNotification(text) {
+	if(text=='')return;
   var el = $("#notification");
   el.innerHTML = text;
   el.removeAttribute('hidden');
@@ -584,7 +585,7 @@ function stateMachine (resp) {
 		del.removeAttribute('hidden');
 	}
 	lastState=curState;
-	if(curState== 1 || curState == 3){
+	if(curState == -1 || curState== 1 || curState == 3){
 		window.setTimeout(function (){ajaxReq('GET', "/meta/state", stateMachine)}, 2000);
 	}
 }
@@ -607,45 +608,14 @@ function displayMeta(data) {
   Object.keys(data).forEach(function (v) {
     el = $("#" + v);
     if (el != null) {
-      if (el.nodeName === "DIV"){
-		var toouthigh=true;
-		var tooutlow=true;
-		var toin=true;
-			el.innerHTML = "BLANK";
-		if (data[v]==-2){
-			tooutlow=false;
-			el.innerHTML = "OUT LOW";
-			}
-		if (data[v]==-1){
-			toouthigh=false;
-			el.innerHTML = "OUT HIGH";
-			}
-		if (data[v]==0){
-			el.innerHTML = "not configured";
-			}
-		if (data[v]>0){
-			toin=false;
-			el.innerHTML = "IN "+data[v];
-			}
-		if(toin){
-			el.innerHTML+=" | <input type='button' value='TO INPUT' onclick='setMeta(\""+v.substr(-2)+"\",\"1\")'/>";
-		}
-		if(tooutlow){
-			el.innerHTML+=" | <input type='button' value='TO OUTPUT LOW' onclick='setMeta(\""+v.substr(-2)+"\",\"-2\")'/>";
-		}
-		if(toouthigh){
-			el.innerHTML+=" | <input type='button' value='TO OUTPUT HIGH' onclick='setMeta(\""+v.substr(-2)+"\",\"-1\")'/>";
-		}
-    }}});
+		console.log("have "+v+" : "+data[v]);
+		  if (data[v]==1)el.checked=false;
+		  if (data[v]==2)el.checked=true;
+		  
+    }});
 
 }
 
-function toggle(el){
-	if(!$('#'+el).hasAttribute("hidden")){
-  $("#"+el).setAttribute("hidden", "");}
-  else{$("#meta-form").removeAttribute("hidden");}
-}
-	
 function fetchMeta() {
 	console.log("fetchMeta !");
   ajaxJson("GET", "/meta/gpio", displayMeta, function () {
@@ -664,19 +634,21 @@ function changeMetaStatus(e) {
   });
 }
 
-function setMeta(name, v) {
-  ajaxSpin("POST", "/meta/gpio?num=" + name+"&v=" + v, function () {
-    var n = name.replace("-enable", "");
-    showNotification(n + " is now " + (v ? "enabled" : "disabled"));
-    window.setTimeout(fetchMeta, 100);
+function setMeta(b,d){
+	ajaxSpin("POST","/meta/gpio?num="+b+"&v="+(d?"-1":"-2"),
+	function(){fetchMeta();
   }, function () {
+	fetchMeta();
     showWarning("Enable/disable failed");
-    window.setTimeout(fetchMeta, 100);
   });
 }
 
-function ledControl(e){
-	e.preventDefault();
-	var el=$("#ledbutton");
-	toggleClass(el,active);
+function ledControl05(e){
+setMeta("05",$('#meta-gpio-05').checked);
+}
+function ledControl12(e){
+setMeta("12",$('#meta-gpio-12').checked);
+}
+function ledControl13(e){
+setMeta("13",$('#meta-gpio-13').checked);
 }

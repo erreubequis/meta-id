@@ -182,14 +182,14 @@ a:active {
 
 #notification {
   position: absolute;
-  left: 25%;
-  width: 50%;
-  top: 10;
+  top: 0;
+  right:0;
+  width:50%;
   z-index: 200;
   font-size: 110%;
-  text-align: center;
-  background-color: #693;
-  color: #cfc;
+  text-align: right;
+  background-color: #3e0694;
+  color:white;
   padding: 0.1em 0.4em;
 }
 
@@ -198,6 +198,10 @@ a:active {
 	background-color:red;
 }
 
-.led .active{
+.led:checked{
 	background-color:green;
+}
+.config{
+	  border: 1px solid #3e0694;
+	font-size:0.9em;
 }
