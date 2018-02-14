@@ -446,8 +446,8 @@ mqtt_send_message(MQTT_Client* client) {
 
   // get some details about the message
   uint16_t msg_type = mqtt_get_type(buf->data);
-  uint8_t  msg_id = mqtt_get_id(buf->data, buf->filled);
 #ifdef MQTT_DBG
+  uint8_t  msg_id = mqtt_get_id(buf->data, buf->filled);
   os_printf("MQTT: Send type=%s id=%04X len=%d\n", mqtt_msg_type[msg_type], msg_id, buf->filled);
 #if 0
   for (int i=0; i<buf->filled; i++) {

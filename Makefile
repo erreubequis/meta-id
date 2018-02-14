@@ -242,7 +242,7 @@ endif
 
 # which modules (subdirectories) of the project to include in compiling
 LIBRARIES_DIR 	= libraries
-MODULES		+= espfs httpd user serial cmd meta-id dnsd
+MODULES		+= espfs httpd cmd serial meta-id
 MODULES		+= $(foreach sdir,$(LIBRARIES_DIR),$(wildcard $(sdir)/*))
 EXTRA_INCDIR 	= include .
 

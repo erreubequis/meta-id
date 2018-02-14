@@ -65,10 +65,12 @@ static enum {		// overall programming states
   stateGetFuse3,
   stateProg,		// programming...
 } progState;
+#ifdef OPTIBOOT_DBG
 static char* progStates[] = { "init", "sync", "var1", "var2", "var3",
 	"sig1", "sig2", "sig3",
 	"fuse1", "fuse2", "fuse3",
 	"prog" };
+#endif
 static short baudCnt;        // counter for sync attempts at different baud rates
 static short ackWait;        // counter of expected ACKs
 static uint32_t baudRate;    // baud rate at which we're programming

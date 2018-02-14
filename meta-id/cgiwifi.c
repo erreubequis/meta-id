@@ -925,10 +925,12 @@ void ICACHE_FLASH_ATTR wifiInit() {
         apconf.beacon_interval = AP_BEACON_INTERVAL;
 #endif
    // Check softap config
+#ifdef CGIWIFI_DBG
     bool softap_set_conf = wifi_softap_set_config(&apconf);
     // Debug info
 
     DBG("Wifi Soft-AP parameters change: %s\n",softap_set_conf? "success":"fail");
+#endif
 #endif // if defined(AP_SSID)
 
     configWifiIP();
