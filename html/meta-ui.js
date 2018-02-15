@@ -585,7 +585,7 @@ function stateMachine (resp) {
 		del.removeAttribute('hidden');
 	}
 	lastState=curState;
-	if(curState == -1 || curState== 1 || curState == 3){
+	if(curState== 1 || curState == 3){
 		window.setTimeout(function (){ajaxReq('GET', "/meta/state", stateMachine)}, 2000);
 	}
 }

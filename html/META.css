@@ -193,15 +193,47 @@ a:active {
   padding: 0.1em 0.4em;
 }
 
-.led{
-	border:2px solid black;
-	background-color:red;
+.config{
+	font-size:0.9em;
+	position:absolute;
+  top: 24;
+  right:0;
 }
 
-.led:checked{
-	background-color:green;
+/**
+ * Checkbox Four
+ * from https://paulund.co.uk/style-checkboxes-with-css
+ */
+.checkboxFour {
+	width: 40px;
+	height: 40px;
+	background: #3e0694;
+	margin: 2px 9px;
+	border-radius: 100%;
+	position: relative;
+	box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}/**
+ * Create the checkbox button
+ */
+.checkboxFour label {
+	display: block;
+	width: 30px;
+	height: 30px;
+	border-radius: 100px;
+
+	transition: all .5s ease;
+	cursor: pointer;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	z-index: 1;
+
+	background: #333;
+	box-shadow:inset 0px 1px 3px rgba(0,0,0,0.5);
 }
-.config{
-	  border: 1px solid #3e0694;
-	font-size:0.9em;
+/**
+ * Create the checked state
+ */
+.checkboxFour input[type=checkbox]:checked + label {
+	background: #26ca28;
 }

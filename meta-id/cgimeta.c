@@ -24,19 +24,33 @@
 #include "web-server.h"
 #include "httpclient.h"
 #include "hash.h"
+#include "pwm.h"
 #ifdef SYSLOG
 #include "syslog.h"
 #endif
+
+#if 0
 #define DBG(format, ...) do { os_printf(format, ## __VA_ARGS__); } while(0)
+#else
+#define DBG(format, ...) do { ; } while(0)
+#endif
+
+#define PWM_0_OUT_IO_MUX  PERIPHS_IO_MUX_MTDI_U
+#define PWM_0_OUT_IO_NUM  12
+#define PWM_0_OUT_IO_FUNC FUNC_GPIO12
+#define PWM_CHANNEL 1
 
 char MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
 
 static uint32 systime, rtctime;
 
+int ICACHE_FLASH_ATTR meta_init_pwm();
+
 void ICACHE_FLASH_ATTR cgiMetaInit() {
   for (int i=0; i<16; i++) {
 	MetaLimen[i] = 0;
 	}
+meta_init_pwm();
 }
 
 static char *connStatuses[] = { "idle", "connecting", "wrong password", "AP not found",
@@ -107,7 +121,9 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
     flashConfig.sys_descr,
     system_adc_read()/1024.0
     );
-
+	pwm_set_duty(255, 0);
+	pwm_start();
+	
   jsonHeader(connData, 200);
   httpdSend(connData, buff, -1);
   return HTTPD_CGI_DONE;
@@ -518,6 +534,8 @@ int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) {
 			msg="unknown";
 		}
 	}
+	pwm_set_duty(10, 0);
+	pwm_start();
 	len=os_sprintf(buff,"{\"state\":%d,\"msg\":\"%s\"}",state,msg);
 	jsonHeader(connData, 200);
 	httpdSend(connData, buff, len);
@@ -527,8 +545,10 @@ int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) {
 
 
 
-/*int ICACHE_FLASH_ATTR meta_init_pwm(){
-	uint32 io_info[][2]={{PWM_0_OUT_IO_MUX,PWM_0_OUT_IO_FUNC,PWM_0_OUT_IO_NUM},
-		{PWM_1_OUT_IO_MUX,PWM_1_OUT_IO_FUNC,PWM_1_OUT_IO_NUM}};
-	
-}*/
+int ICACHE_FLASH_ATTR meta_init_pwm(){
+uint32_t duty=0;
+	uint32 io_info[][3]={{PWM_0_OUT_IO_MUX,PWM_0_OUT_IO_FUNC, PWM_0_OUT_IO_NUM}};
+pwm_init( 150, &duty, 0,io_info);
+pwm_start();
+return 1;
+}

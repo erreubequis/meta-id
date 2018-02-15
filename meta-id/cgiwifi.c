@@ -838,11 +838,13 @@ int ICACHE_FLASH_ATTR checkString(char *str){
 void ICACHE_FLASH_ATTR wifiInit() {
 
     // Check the wifi opmode
-    int x = wifi_get_opmode() & 0x3;
+//    int x = wifi_get_opmode() & 0x3;
 
     // If STA is enabled switch to STA+AP to allow for recovery, it will then switch to STA-only
     // once it gets an IP address
-    if (x == 1) wifi_set_opmode(3);
+    //if (x == 1) wifi_set_opmode(3);
+// force STA+AP
+	wifi_set_opmode(3);
 
     // Call both STATION and SOFTAP default config
     wifi_station_get_config_default(&stconf);
