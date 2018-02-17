@@ -87,21 +87,12 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
 
   if (connData->conn == NULL) return HTTPD_CGI_DONE; // Connection aborted. Clean up.
 
-  uint8 part_id = system_upgrade_userbin_check();
-  uint32 fid = spi_flash_get_id();
   struct rst_info *rst_info = system_get_rst_info();
 
   os_sprintf(buff,
     "{ "
       "\"name\": \"%s\", "
       "\"reset cause\": \"%d=%s\", "
-      "\"size\": \"%s\", "
-      "\"upload-size\": \"%d\", "
-      "\"id\": \"0x%02X 0x%04X\", "
-      "\"partition\": \"%s\", "
-      "\"slip\": \"%s\", "
-      "\"mqtt\": \"%s/%s\", "
-      "\"baud\": \"%d\", "
       "\"pass\": \"%s\", "
       "\"description\": \"%s\","
       "\"voltage\": \"%1.6f\""
@@ -109,14 +100,6 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
     flashConfig.hostname,
     rst_info->reason,
     rst_codes[rst_info->reason],
-    flash_maps[system_get_flash_size_map()],
-    getUserPageSectionEnd()-getUserPageSectionStart(),
-    fid & 0xff, (fid & 0xff00) | ((fid >> 16) & 0xff),
-    part_id ? "user2.bin" : "user1.bin",
-    flashConfig.slip_enable ? "enabled" : "disabled",
-    flashConfig.mqtt_enable ? "enabled" : "disabled",
-    mqttState(),
-    flashConfig.baud_rate,
     flashConfig.user_pass,
     flashConfig.sys_descr,
     system_adc_read()/1024.0

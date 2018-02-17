@@ -5,8 +5,11 @@
  * */
 /*#include "stdint.h" / * Replace with <stdint.h> if appropriate */
 #include <esp8266.h>
+#if 0
 #define DBG(format, ...) do { os_printf(format, ## __VA_ARGS__); } while(0)
-
+#else
+#define DBG(format, ...) do { ; }while(0)
+#endif
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
   || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
