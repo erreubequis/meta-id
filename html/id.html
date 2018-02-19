@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>META</title>
+<style>
+body { 
+  font-family: "Lato", sans-serif;
+  color: #3e0694;
+}
+</style>
+<link href="META.css" rel="stylesheet" type="text/css">
+<meta charset="utf-8">
+</head>
+
+
+<p class="headerlogo2"><a href="welcome.html" target="_self">META</a></p>
+<p><span class="menuwelcome">ID</span><br>
+<div id="loginform">
+<form action="/meta/userpass" id="passform" class="pure-form">
+<p><br>
+This sections refers to the connection of your edition to the network.<p>
+For accessing here please type your personal password.
+<p><input class="loginbox"type="password" name="passwd" id="passwd"/></p>
+<p class="submitboxtext2">
+<a id="special-button"  class="pure-button button-primary">Submit</a>
+</form>  
+</div>
+<script type="text/javascript">
+onLoad(function() {
+  bnd($("#special-button"), "click", setPass);
+});
+<span p class="black200percent">Your password for administration purposes
+is set and you are now connected to META-ID</span>.
+</body>
+</html>
