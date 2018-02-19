@@ -247,8 +247,8 @@ user_init(void) {
   cgiServicesSNTPInit();
 #ifdef MQTT
   if (flashConfig.mqtt_enable) {
-    NOTICE("initializing MQTT");
-    mqtt_client_init();
+/*    NOTICE("initializing MQTT");
+    mqtt_client_init();*/
   }
 #endif
   NOTICE("initializing user application");

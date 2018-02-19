@@ -25,6 +25,7 @@
 #include "httpclient.h"
 #include "hash.h"
 #include "pwm.h"
+#include "wp-xmlrpc.h"
 #ifdef SYSLOG
 #include "syslog.h"
 #endif
@@ -288,6 +289,7 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   httpdSend(connData, buff, len);
   systime=system_get_time();
   rtctime=system_get_rtc_time();
+  wpXmlRpcSend(buff);
   return HTTPD_CGI_DONE;
 }
 
