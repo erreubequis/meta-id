@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>META</title>
+<style>
+body { 
+  font-family: "Lato", sans-serif;
+  color: #3e0694;
+}
+</style>
+<link href="META.css" rel="stylesheet" type="text/css">
+<meta charset="utf-8">
+</head>
+
+<p class="headerlogo2">META</p>
+<p><span class="menuwelcome">LOGIN</span><br>
+<div id="loginform">
+<form action="/meta/userpass" id="passform" class="pure-form">
+<p><br>
+Set your personal password here
+<p><input class="loginbox"type="password" name="passwd" id="passwd"/></p>
+<p class="submitboxtext2">
+<a id="special-button"  class="pure-button button-primary">Submit</a>
+</form>  
+</div>
+<script type="text/javascript">
+onLoad(function() {
+  bnd($("#special-button"), "click", setPass);
+});
+</script>
+</body>
+</html>
