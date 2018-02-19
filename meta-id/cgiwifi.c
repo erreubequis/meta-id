@@ -850,7 +850,8 @@ void ICACHE_FLASH_ATTR wifiInit() {
     wifi_station_get_config_default(&stconf);
     wifi_softap_get_config_default(&apconf);
 
-    DBG("Wifi init, mode=%s\n",wifiMode[x]);
+    //DBG("Wifi init, mode=%s\n",wifiMode[x]);
+	DBG("Wifi init\n");
 
     // Change STATION parameters, if defined in the Makefile
 #if defined(STA_SSID) && defined(STA_PASS)
