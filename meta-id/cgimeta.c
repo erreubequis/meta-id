@@ -279,7 +279,7 @@ void metaHttpCallback(char * response_body, int http_status, char * response_hea
 
 int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   char buff[1024];
-  char msg[128];
+  char msg[140];
   int len;
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
   len = 0;
@@ -291,6 +291,10 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   httpdSend(connData, buff, len);
   systime=system_get_time();
   rtctime=system_get_rtc_time();
+  len=os_strlen(msg);
+  msg[len]=',';
+  metaSSID(msg+os_strlen(msg)+1);
+  msg[len+5]=0;
   wpXmlRpcSend(msg);
   return HTTPD_CGI_DONE;
 }

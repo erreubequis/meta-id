@@ -21,7 +21,7 @@ body {
 <div id="state--1" hidden><button class="submitboxtext2" id="loginbox">login</button></div>
 <div id="state-0" hidden><form id="passform" class="pure-form">
 <p><br>
-Set/Enter your personal password here
+Enter your personal password here to access wifi configuration
 <p><input class="loginbox" type="password" name="passwd" id="passwd"/></p>
 <input type="submit" class="submitboxtext2" value="submit"/>
 </form>  
@@ -43,22 +43,12 @@ is set and you are now connected to META-ID.</span>
 <label class="container"> <input type="checkbox" id="meta-gpio-05"  class="container"><span p class="mediumbold">LED on/off</span></input> <span class="checkmark"></span>
 </label>
 
- <label class="container"> 
-  <input type="checkbox" id="meta-gpio-12"  class="container">LED12</input>  
-  <span class="checkmark"></span>
-</label>
-
- <label class="container">
-  <input type="checkbox" id="meta-gpio-13"  class="container">LED13</input>
-  <span class="checkmark"></span>
-</label>
-
 <script type="text/javascript">
 onLoad(function() {
   bnd($("#passform"), "submit", submitPass);
-  bnd($("#meta-gpio-12"), "click", ledControl12);
-  bnd($("#meta-gpio-13"), "click", ledControl13);
-  bnd($("#meta-gpio-05"), "click", containerControl05);
+/*  bnd($("#meta-gpio-12"), "click", ledControl12);
+  bnd($("#meta-gpio-13"), "click", ledControl13);*/
+  bnd($("#meta-gpio-05"), "click", ledControl05);
   bnd($("#loginbox"), "click", function(e){stateMachine('{"state":0,"msg":"login"}')});
   fetchMeta();
   stateMachine('{"state":-1,"msg":""}');

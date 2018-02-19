@@ -292,7 +292,6 @@ function showWifiInfo(data) {
   });
   var dhcp = $('#dhcp-r'+data.dhcp);
   if (dhcp) dhcp.click();
-  $("#wifi-spinner").setAttribute("hidden", "");
   $("#wifi-table").removeAttribute("hidden");
   currAp = data.ssid;
 }
@@ -540,12 +539,13 @@ function resetWifiAp(e) {
     });
 }
 
-function toggle(el){
-del=$("#"+el);
-if (del.visibility != 'hidden')
-del.visibility = 'hidden';
-else
-del.visibility = 'visible';
+function toggle(a){
+	del=document.getElementById(a);
+	if(del.hasAttribute("hidden")){
+		del.removeAttribute("hidden");
+	}
+	else{
+		del.setAttribute("hidden","");}
 }
 
 function setPass(e){
@@ -652,3 +652,15 @@ setMeta("12",$('#meta-gpio-12').checked);
 function ledControl13(e){
 setMeta("13",$('#meta-gpio-13').checked);
 }
+
+
+function  sendServer(e){
+	  e.preventDefault();
+  var v = document.querySelector('input[name="send-msg"]').value;
+  ajaxSpin("GET", "/meta/sand?msg=" + v, function () {
+    showNotification("Your message was sent !");
+  }, function (s, st) {
+    showWarning("Error: " + st);
+  });
+}
+  
