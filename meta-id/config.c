@@ -116,8 +116,8 @@ fail:
 }
 
 void ICACHE_FLASH_ATTR configWipe(void) {
-  spi_flash_erase_sector(flashAddr()>>12);
-  spi_flash_erase_sector((flashAddr()+FLASH_SECT)>>12);
+	spi_flash_erase_sector(flashAddr()>>12);
+	spi_flash_erase_sector((flashAddr()+FLASH_SECT)>>12);
 }
 
 static int ICACHE_FLASH_ATTR selectPrimary(FlashFull *fc0, FlashFull *fc1);

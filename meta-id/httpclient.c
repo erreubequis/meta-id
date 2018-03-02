@@ -19,7 +19,7 @@
 
 
 // Debug output.
-#if 0
+#if 1
 #define PRINTF(...) os_printf(__VA_ARGS__)
 #else
 #define PRINTF(...)
@@ -383,7 +383,7 @@ static void ICACHE_FLASH_ATTR dns_callback(const char * hostname, ip_addr_t * ad
 		espconn_regist_reconcb(conn, error_callback);
 
 		if (req->secure) {
-//			espconn_secure_set_size(ESPCONN_CLIENT,5120); // set SSL buffer size
+			espconn_secure_set_size(ESPCONN_CLIENT,5120); // set SSL buffer size
 			espconn_secure_connect(conn);
 		} else {
 			espconn_connect(conn);

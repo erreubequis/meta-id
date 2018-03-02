@@ -271,7 +271,7 @@ void ICACHE_FLASH_ATTR httpdRedirect(HttpdConnData *conn, char *newUrl) {
   char buff[1024];
   int l;
   conn->priv->code = 302;
-  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: esp8266-link\r\nConnection: close\r\n"
+  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\nConnection: close\r\n"
       "Location: %s\r\n\r\nRedirecting to %s\r\n", newUrl, newUrl);
   httpdSend(conn, buff, l);
 }
@@ -279,16 +279,19 @@ void ICACHE_FLASH_ATTR httpdRedirect(HttpdConnData *conn, char *newUrl) {
 // set cookie with password hash and redirect
 // if hash=0, delete cookie with date in past
 int ICACHE_FLASH_ATTR httpdSetCookie(HttpdConnData *conn, char *newUrl, uint32 hash) {
-  char buff[128];
+  char buff[1024];
+  int l;
   int expire;
   DBG("SetCookie : %d - redirect to %s\n", hash, newUrl);
 //  connData->priv->code = 302;
   if(hash==0)expire=1979;else expire=2024;
-	os_sprintf(buff, 
-	"h=%d; path=/; expires=Mon, 1 Jan %d 23:42:01 GMT; max-age: 3600; HttpOnly\r\n", 
-      hash, expire);
+  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\nConnection: close\r\n"
+      "Set-Cookie: h=%d; path=/; expires=Mon, 1 Jan %d 23:42:01 GMT; max-age: 3600; HttpOnly\r\n"
+      "Location: %s\r\n\r\nRedirecting to %s\r\n", hash, expire, newUrl, newUrl);
+  httpdSend(conn, buff, l);
+/*      hash, expire);
   conn->cgiArg=buff;
-connData->url=newUrl;
+connData->url=newUrl;*/
   return cgiEspFsHook(connData);
 }
 
@@ -300,7 +303,7 @@ int ICACHE_FLASH_ATTR httpdSendAuthCookie(HttpdConnData *conn, uint32 hash) {
 //  connData->priv->code = 302;
   if(hash==0)expire=1979;else expire=2024;
   conn->priv->code = 302;
-  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: esp8266-link\r\nConnection: close\r\n"
+  l = os_sprintf(buff, "HTTP/1.0 302 Found\r\nServer: meta-id\r\nConnection: close\r\n"
       "Set-Cookie: h=%d; path=/; expires=Mon, 1 Jan %d 23:42:01 GMT; max-age: 3600; HttpOnly\r\n"
       "Location: /meta/auth\r\n\r\nRedirecting to /meta/auth\r\n", hash, expire);
   httpdSend(conn, buff, l);
@@ -313,7 +316,7 @@ void ICACHE_FLASH_ATTR httpdForbidden(HttpdConnData *conn) {
   int l;
   connData->priv->code = 401;
   l = os_sprintf(buff, "HTTP/1.0 401 Forbidden\r\nServer: meta-id\r\nConnection: close\r\n\r\n"
-      "Not allowed<br/><a href=\"/meta/auth\">Login</a>\r\n");
+      "<html><body>Not allowed<br/><a href=\"/welcome.html\">Home</a></body></html>\r\n");
   httpdSend(connData, buff, l);
 }
 
@@ -382,8 +385,8 @@ static void ICACHE_FLASH_ATTR httpdSentCb(void *arg) {
   httpdFlush(conn);
 }
 
-static const char *httpNotFoundHeader = "HTTP/1.0 404 Not Found\r\nConnection: close\r\n"
-  "Content-Type: text/plain\r\nContent-Length: 12\r\n\r\nNot Found.\r\n";
+static const char *httpNotFoundHeader = "HTTP/1.0 404 Not Found\r\nServer: meta-id\r\n"
+  "Connection: close\r\nContent-Type: text/plain\r\nContent-Length: 12\r\n\r\nNot Found.\r\n";
 
 //This is called when the headers have been received and the connection is ready to send
 //the result headers and data.

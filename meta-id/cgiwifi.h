@@ -19,6 +19,7 @@ void configWifiIP();
 void wifiInit(void);
 void wifiAddStateChangeCb(WifiStateChangeCb cb);
 int checkString(char *str);
+void ICACHE_FLASH_ATTR wifiConfigWipe();
 
 extern uint8_t wifiState;
 

@@ -65,6 +65,7 @@ function scanResult() {
         var n = 0;
         for (var i=0; i<data.result.APs.length; i++) {
           if (data.result.APs[i].essid == "" && data.result.APs[i].rssi == 0) continue;
+          if($("#opt-"+data.result.APs[i].essid) != null) continue; // skip duplicate essids
           $("#aps").appendChild(createInputForAp(data.result.APs[i]));
           n = n+1;
         }

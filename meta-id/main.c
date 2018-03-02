@@ -110,6 +110,7 @@ HttpdBuiltInUrl builtInUrls[] = {
   { "/console/text", ajaxConsole, NULL ,0},
   { "/console/send", ajaxConsoleSend, NULL ,0},
   { "/user.html", cgiEspFsHook, NULL ,'a'},
+  { "/wifi.html", cgiEspFsHook, NULL ,'a'},
   //Enable the line below to protect the WiFi configuration with an username/password combo.
 //{"/wifi/*", authBasic, metaAuth,0},
   { "/wifi", cgiRedirect, "/wifi/wifi.html" ,0},
@@ -181,22 +182,24 @@ user_rf_cal_sector_set(void) {
 // Main routine to initialize meta-id.
 void ICACHE_FLASH_ATTR
 user_init(void) {
-//bool restoreOk;
+bool restoreOk;
   // uncomment the following three lines to see flash config messages for troubleshooting
   //uart_init(115200, 115200);
   //logInit();
   //os_delay_us(100000L);
-  bool restoreOk = configRestore();
+  restoreOk = configRestore();
   // Init gpio pin registers
   gpio_init();
   gpio_output_set(0, 0, 0, (1<<15)); // some people tie it to GND, gotta ensure it's disabled
-/*
+
   restoreOk=meta_init_gpio();
   // get the flash config so we know how to init things
    if (restoreOk)
 		restoreOk= configRestore();
-	else
-		configWipe(); // uncomment to reset the config for testing purposes	*/
+	else{
+		configWipe(); // uncomment to reset the config for testing purposes	
+		wifiConfigWipe();
+	}
   // init UART
   uart_init(CALC_UARTMODE(flashConfig.data_bits, flashConfig.parity, flashConfig.stop_bits),
             flashConfig.baud_rate, 115200);

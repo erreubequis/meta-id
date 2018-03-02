@@ -12,7 +12,9 @@
 #include "uart.h"
 #include "stk500.h"
 #include "serbridge.h"
+#ifdef MQTT
 #include "mqtt_cmd.h"
+#endif
 #include "serled.h"
 
 #include "pgmshared.h"
@@ -62,7 +64,9 @@ static void ICACHE_FLASH_ATTR optibootInit() {
   progState = stateInit;
   baudCnt = 0;
   uart0_baud(flashConfig.baud_rate);
+#ifdef MQTT
   mqtt_unblock();
+#endif
   ackWait = 0;
   errMessage[0] = 0;
   responseLen = 0;
@@ -115,7 +119,9 @@ int ICACHE_FLASH_ATTR cgiOptibootSync(HttpdConnData *connData) {
   } else if (connData->requestType == HTTPD_METHOD_POST) {
     // issue reset
     optibootInit();
+#ifdef MQTT
     mqtt_block(); // prevent MQTT from interfering
+#endif
     baudRate = flashConfig.baud_rate;
     programmingCB = optibootUartRecv;
     initBaud();

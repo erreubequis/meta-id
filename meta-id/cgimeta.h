@@ -16,7 +16,7 @@ void cgiMetaInit();
 int metaCheckHash (int32 hash);
 int cgiMetaLogout(HttpdConnData *connData);
 int cgiMetaGetSSID(HttpdConnData *connData);
-//int meta_init_gpio();
+int ICACHE_FLASH_ATTR meta_init_gpio();
 int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) ;
 int ICACHE_FLASH_ATTR cgiMetaFetch(HttpdConnData *connData) ;
 int ICACHE_FLASH_ATTR cgiMetaGetTimers(HttpdConnData *connData) ;

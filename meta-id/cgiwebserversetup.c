@@ -1,5 +1,7 @@
 // Copyright (c) 2015 by Thorsten von Eicken, see LICENSE.txt in the meta-id repo
 
+#ifdef WEBSERVER
+
 #include <esp8266.h>
 #include <osapi.h>
 #include "cgi.h"
@@ -199,3 +201,4 @@ int ICACHE_FLASH_ATTR cgiWebServerList( HttpdConnData *connData){
   httpdSend(connData, buff, -1);
   return HTTPD_CGI_DONE;
 }
+#endif

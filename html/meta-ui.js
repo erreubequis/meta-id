@@ -548,18 +548,6 @@ function toggle(a){
 		del.setAttribute("hidden","");}
 }
 
-function setPass(e){
-	e.preventDefault();
-	showNotification("setting password...");
-  var url = "/meta/userpass?passwd="+$("#passwd").value;
-  ajaxSpin("GET", url, function(resp) {
-      showNotification(resp);
-    }, function(s, st) {
-      showWarning("Error setting password: "+st);
-    });
-
-}
-
 
 function restartSM(resp){
 	stateMachine(resp);
@@ -577,6 +565,9 @@ function stateMachine (resp) {
 	curState=jrep['state'];
 	if(lastState!=curState){
 	showNotification(jrep['msg']);
+	if(jrep['auth'] == 0){
+		curState=-1;
+	}
 		for(i=-1;i<5;i++){
 			del=$("#state-"+i);
 			del.setAttribute('hidden','');
@@ -595,6 +586,7 @@ function loginSuccess(resp){
 }
 
 function loginFail(s,st){
+    showNotification("Login failed");
 	stateMachine(st);
 }
 
@@ -617,7 +609,7 @@ function displayMeta(data) {
 }
 
 function fetchMeta() {
-	console.log("fetchMeta !");
+//	console.log("fetchMeta !");
   ajaxJson("GET", "/meta/gpio", displayMeta, function () {
     window.setTimeout(fetchMeta, 1000);
   });

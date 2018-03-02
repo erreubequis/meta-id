@@ -106,7 +106,7 @@ LED_SERIAL_PIN      ?= 14
 # --------------- meta-id modules config options ---------------
 
 # Optional Modules: mqtt rest socket web-server syslog
-MODULES ?= mqtt web-server
+MODULES ?= 
 
 # --------------- esphttpd config options ---------------
 
@@ -247,7 +247,7 @@ MODULES		+= $(foreach sdir,$(LIBRARIES_DIR),$(wildcard $(sdir)/*))
 EXTRA_INCDIR 	= include .
 
 # libraries used in this project, mainly provided by the SDK
-LIBS = c gcc hal phy pp net80211 wpa main lwip_536 crypto pwm
+LIBS = c gcc hal phy pp net80211 wpa main lwip_536 crypto pwm ssl
 
 # compiler flags using during compilation of source files
 CFLAGS	+= -Os -ggdb -std=c99 -Werror -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions \

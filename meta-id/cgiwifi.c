@@ -826,7 +826,26 @@ int ICACHE_FLASH_ATTR checkString(char *str){
     return 1;
 }
 
+/* wipes ap/sta configuration */
 
+void ICACHE_FLASH_ATTR wifiConfigWipe() {
+	char buff[10];
+    wifi_station_get_config_default(&stconf);
+    wifi_softap_get_config_default(&apconf);
+	os_memset(apconf.ssid, 0, 32);
+	os_sprintf(buff,".META_NNNN");
+	metaSSID(buff+6);
+	apconf.ssid_len=10;;
+	apconf.channel=10;;
+	apconf.authmode=0;
+	os_memset(apconf.password, 0, 64);
+	os_memset(stconf.ssid, 0, 32);
+	os_memset(stconf.password, 0, 64);
+	os_memset(stconf.bssid, 0, 6);
+	stconf.bssid_set=0;
+    wifi_softap_set_config(&apconf);
+	wifi_station_set_config(&stconf);
+}
 
 /*  Init the wireless
  *

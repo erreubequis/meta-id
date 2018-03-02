@@ -21,7 +21,6 @@
 #include "cgimqtt.h"
 #include "cgimeta.h"
 #include "cgiwifi.h"
-#include "web-server.h"
 #include "httpclient.h"
 #include "hash.h"
 #include "pwm.h"
@@ -96,14 +95,14 @@ int ICACHE_FLASH_ATTR ICACHE_FLASH_ATTR cgiMetaDump(HttpdConnData *connData) {
       "\"reset cause\": \"%d=%s\", "
       "\"pass\": \"%s\", "
       "\"description\": \"%s\","
-      "\"voltage\": \"%1.6f\""
+      "\"voltage\": \"%d\""
     " }",
     flashConfig.hostname,
     rst_info->reason,
     rst_codes[rst_info->reason],
     flashConfig.user_pass,
     flashConfig.sys_descr,
-    system_adc_read()/1024.0
+    system_adc_read()
     );
 	pwm_set_duty(255, 0);
 	pwm_start();
@@ -148,7 +147,7 @@ int ICACHE_FLASH_ATTR cgiMetaUserPass(HttpdConnData *connData) {
 int ICACHE_FLASH_ATTR cgiMetaLogout(HttpdConnData *connData) {
   if (connData->conn==NULL) 
 	return HTTPD_CGI_DONE;
-	httpdSetCookie(connData,(char*)connData->cgiArg,0);
+	httpdSetCookie(connData,"/welcome.html",0);
   return HTTPD_CGI_DONE;
 }
 
@@ -271,7 +270,7 @@ void metaHttpCallback(char * response_body, int http_status, char * response_hea
 	if (http_status != HTTP_STATUS_GENERIC_ERROR) {
 		os_printf(" strlen(headers)=%d", strlen(response_headers));
 		os_printf(" body_size=%d\n", body_size);
-//		os_printf("body=%s<EOF>\n", response_body);
+		os_printf("body=%s<EOF>\n", response_body);
 		os_printf("duration %d / rtc : %d\n",system_get_time()-systime,system_get_rtc_time()-rtctime);
 	}
 }
@@ -527,7 +526,7 @@ int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) {
 	}
 	pwm_set_duty(10, 0);
 	pwm_start();
-	len=os_sprintf(buff,"{\"state\":%d,\"msg\":\"%s\"}",state,msg);
+	len=os_sprintf(buff,"{\"state\":%d,\"auth\":%d,\"msg\":\"%s\"}",state,auth,msg);
 	jsonHeader(connData, 200);
 	httpdSend(connData, buff, len);
 	return HTTPD_CGI_DONE;

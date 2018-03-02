@@ -27,9 +27,10 @@ Enter your personal password here to access wifi configuration
 </form>  
 </div>
 <div id="state-1" hidden>login success</div>
-<div id="state-2" hidden><a href="/wifi.html"><i>wifi configuration</i></a></div>
+<div id="state-2" hidden><a href="/wifi.html"><i>wifi configuration</i></a> | <a href="/logout"><i>Logout</i></a></div>
 <div id="state-3" hidden>connecting</div>
-<div id="state-4" hidden>connected <a href="/wifi.html"><i>configuration</i></a></div>
+<div id="state-4" hidden>connected <a href="/wifi.html"><i>configuration</i></a> | <a href="/logout"><i>Logout</i></a></div>
+</div>
 <p>
 <br>
 </p>
@@ -42,6 +43,7 @@ is set and you are now connected to META-ID.</span>
 
 <label class="container"> <input type="checkbox" id="meta-gpio-05"  class="container"><span p class="mediumbold">LED on/off</span></input> <span class="checkmark"></span>
 </label>
+</div>
 
 <script type="text/javascript">
 onLoad(function() {
@@ -51,7 +53,7 @@ onLoad(function() {
   bnd($("#meta-gpio-05"), "click", ledControl05);
   bnd($("#loginbox"), "click", function(e){stateMachine('{"state":0,"msg":"login"}')});
   fetchMeta();
-  stateMachine('{"state":-1,"msg":""}');
+  ajaxReq('GET', "/meta/state", stateMachine);
 });
 </script>
 

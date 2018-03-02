@@ -17,7 +17,7 @@ static char msg[128];
 #endif
 
 void wpXmlRpcCb(char * response_body, int http_status, char * response_headers, int body_size){
-	DBG("xml callback : %d - %s  - %d\n",http_status, response_headers, body_size);
+	DBG("xml callback : %d - len: %d\n",http_status, body_size);
 	}
 
 
