@@ -383,8 +383,22 @@ static void ICACHE_FLASH_ATTR dns_callback(const char * hostname, ip_addr_t * ad
 		espconn_regist_reconcb(conn, error_callback);
 
 		if (req->secure) {
+			int rc;
 			espconn_secure_set_size(ESPCONN_CLIENT,5120); // set SSL buffer size
-			espconn_secure_connect(conn);
+			rc=espconn_secure_connect(conn);
+			if(rc!=0){
+				switch(rc){
+					case ESPCONN_MEM:
+						PRINTF("secure connect : oom\n");
+						break;
+					case ESPCONN_ISCONN:
+						PRINTF("secure connect : already connected\n");
+						break;
+					case ESPCONN_ARG:
+						PRINTF("secure connect : invalid argument\n");
+						break;
+					}
+			}
 		} else {
 			espconn_connect(conn);
 		}
