@@ -3,7 +3,7 @@
 
 #include "httpd.h"
 
-int cgiSystemSet(HttpdConnData *connData);
+//int cgiSystemSet(HttpdConnData *connData);
 int cgiSystemInfo(HttpdConnData *connData);
 
 void cgiServicesSNTPInit();

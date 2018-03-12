@@ -4,7 +4,6 @@
 #include "cgi.h"
 #include "config.h"
 #include "sntp.h"
-#include "cgimqtt.h"
 #ifdef SYSLOG
 #include "syslog.h"
 #endif
@@ -24,8 +23,9 @@ char* flash_maps[7] = {
   "2MB:1024/1024", "4MB:1024/1024"
 };
 
-static ETSTimer reassTimer;
+//static ETSTimer reassTimer;
 
+/*
 // Cgi to update system info (name/description)
 int ICACHE_FLASH_ATTR cgiSystemSet(HttpdConnData *connData) {
   if (connData->conn == NULL) return HTTPD_CGI_DONE; // Connection aborted. Clean up.
@@ -53,8 +53,9 @@ int ICACHE_FLASH_ATTR cgiSystemSet(HttpdConnData *connData) {
   }
   return HTTPD_CGI_DONE;
 }
-
+*/
 // Cgi to return various System information
+
 int ICACHE_FLASH_ATTR cgiSystemInfo(HttpdConnData *connData) {
   char buff[1024];
 
@@ -73,9 +74,8 @@ int ICACHE_FLASH_ATTR cgiSystemInfo(HttpdConnData *connData) {
       "\"id\": \"0x%02X 0x%04X\", "
       "\"partition\": \"%s\", "
       "\"slip\": \"%s\", "
-      "\"mqtt\": \"%s/%s\", "
-      "\"baud\": \"%d\", "
-      "\"description\": \"%s\""
+      "\"baud\": \"%d\""
+//      "\"description\": \"%s\""
     " }",
     flashConfig.hostname,
     rst_info->reason,
@@ -85,10 +85,7 @@ int ICACHE_FLASH_ATTR cgiSystemInfo(HttpdConnData *connData) {
     fid & 0xff, (fid & 0xff00) | ((fid >> 16) & 0xff),
     part_id ? "user2.bin" : "user1.bin",
     flashConfig.slip_enable ? "enabled" : "disabled",
-    flashConfig.mqtt_enable ? "enabled" : "disabled",
-    mqttState(),
-    flashConfig.baud_rate,
-    flashConfig.sys_descr
+    flashConfig.baud_rate
     );
 
   jsonHeader(connData, 200);
@@ -147,6 +144,7 @@ int ICACHE_FLASH_ATTR cgiServicesInfo(HttpdConnData *connData) {
 int ICACHE_FLASH_ATTR cgiServicesSet(HttpdConnData *connData) {
   if (connData->conn == NULL) return HTTPD_CGI_DONE; // Connection aborted. Clean up.
 
+#ifdef SYSLOG
   int8_t syslog = 0;
 
   syslog |= getStringArg(connData, "syslog_host", flashConfig.syslog_host, sizeof(flashConfig.syslog_host));
@@ -160,7 +158,6 @@ int ICACHE_FLASH_ATTR cgiServicesSet(HttpdConnData *connData) {
   syslog |= getBoolArg(connData, "syslog_showdate", &flashConfig.syslog_showdate);
   if (syslog < 0) return HTTPD_CGI_DONE;
 
-#ifdef SYSLOG
   if (syslog > 0) {
     syslog_init(flashConfig.syslog_host);
   }

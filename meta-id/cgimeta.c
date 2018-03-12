@@ -18,7 +18,6 @@
 #include "cgi.h"
 #include "config.h"
 #include "sntp.h"
-#include "cgimqtt.h"
 #include "cgimeta.h"
 #include "cgiwifi.h"
 #include "httpclient.h"

@@ -16,14 +16,15 @@
 #include "httpdespfs.h"
 #include "cgi.h"
 #include "cgiwifi.h"
-#include "cgipins.h"
-#include "cgitcp.h"
-#include "cgimqtt.h"
+//#include "cgipins.h"
+//#include "cgitcp.h"
 #include "cgiflash.h"
 #include "cgioptiboot.h"
 #include "cgimega.h"
 #include "cgimeta.h"
+#ifdef WEBSERVER
 #include "cgiwebserversetup.h"
+#endif
 #include "auth.h"
 #include "espfs.h"
 #include "uart.h"
@@ -124,13 +125,10 @@ HttpdBuiltInUrl builtInUrls[] = {
   { "/wifi/apinfo", cgiApSettingsInfo, NULL ,0},
   { "/wifi/apchange", cgiApSettingsChange, NULL,0 },
   { "/system/info", cgiSystemInfo, NULL ,0},
-  { "/system/update", cgiSystemSet, NULL ,0},
+//  { "/system/update", cgiSystemSet, NULL ,0},
   { "/services/info", cgiServicesInfo, NULL ,0},
   { "/services/update", cgiServicesSet, NULL ,0},
-  { "/pins", cgiPins, NULL ,0},
-#ifdef MQTT
-  { "/mqtt", cgiMqtt, NULL ,0},
-#endif
+//  { "/pins", cgiPins, NULL ,0},
 #ifdef WEBSERVER
   { "/web-server/upload", cgiWebServerSetupUpload, NULL ,0},
   { "/web-server/list", cgiWebServerList, NULL ,0},
@@ -155,7 +153,6 @@ char* esp_link_version = VERS_STR(VERSION);
 extern uint32_t _binary_espfs_img_start;
 
 extern void app_init(void);
-extern void mqtt_client_init(void);
 
 void ICACHE_FLASH_ATTR
 user_rf_pre_init(void) {
@@ -248,12 +245,6 @@ bool restoreOk;
 
   // Init SNTP service
   cgiServicesSNTPInit();
-#ifdef MQTT
-  if (flashConfig.mqtt_enable) {
-/*    NOTICE("initializing MQTT");
-    mqtt_client_init();*/
-  }
-#endif
   NOTICE("initializing user application");
   //app_init();
   NOTICE("Waiting for work to do...");
