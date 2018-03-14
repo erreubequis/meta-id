@@ -188,7 +188,7 @@ bool restoreOk;
   // Init gpio pin registers
   gpio_init();
   gpio_output_set(0, 0, 0, (1<<15)); // some people tie it to GND, gotta ensure it's disabled
-
+/*
   restoreOk=meta_init_gpio();
   // get the flash config so we know how to init things
    if (restoreOk)
@@ -196,7 +196,7 @@ bool restoreOk;
 	else{
 		configWipe(); // uncomment to reset the config for testing purposes	
 		wifiConfigWipe();
-	}
+	}*/
   // init UART
   uart_init(CALC_UARTMODE(flashConfig.data_bits, flashConfig.parity, flashConfig.stop_bits),
             flashConfig.baud_rate, 115200);
