@@ -149,6 +149,7 @@ ESP_FLASH_MODE      ?= 0       # 0->QIO
 ESP_FLASH_FREQ_DIV  ?= 0       # 0->40Mhz
 ET_FS               ?= 4m      # 4Mbit flash size in esptool flash command
 ET_FF               ?= 40m     # 40Mhz flash speed in esptool flash command
+ET_INIT_DATA		?= 0x7C000 # where to flash esp_init_data_default.bin
 ET_BLANK            ?= 0x7E000 # where to flash blank.bin to erase wireless settings
 
 else ifeq ("$(FLASH_SIZE)","1MB")
@@ -158,6 +159,7 @@ ESP_FLASH_MODE      ?= 0       # 0->QIO
 ESP_FLASH_FREQ_DIV  ?= 15      # 15->80MHz
 ET_FS               ?= 8m      # 8Mbit flash size in esptool flash command
 ET_FF               ?= 80m     # 80Mhz flash speed in esptool flash command
+ET_INIT_DATA		?= 0xFC000 # where to flash esp_init_data_default.bin
 ET_BLANK            ?= 0xFE000 # where to flash blank.bin to erase wireless settings
 
 else ifeq ("$(FLASH_SIZE)","2MB")
@@ -171,6 +173,7 @@ ESP_FLASH_FREQ_DIV  ?= 15      # 15->80Mhz
 :q
 ET_FS               ?= 16m     # 16Mbit flash size in esptool flash command
 ET_FF               ?= 80m     # 80Mhz flash speed in esptool flash command
+ET_INIT_DATA		?= 0x1FC000 # where to flash esp_init_data_default.bin
 ET_BLANK            ?= 0x1FE000 # where to flash blank.bin to erase wireless settings
 
 else
@@ -183,6 +186,7 @@ ESP_FLASH_MODE      ?= 0       # 0->QIO, 2->DIO
 ESP_FLASH_FREQ_DIV  ?= 15      # 15->80Mhz
 ET_FS               ?= 32m     # 32Mbit flash size in esptool flash command
 ET_FF               ?= 80m     # 80Mhz flash speed in esptool flash command
+ET_INIT_DATA		?= 0x3FC000 # where to flash esp_init_data_default.bin
 ET_BLANK            ?= 0x3FE000 # where to flash blank.bin to erase wireless settings
 endif
 
@@ -418,6 +422,13 @@ flash: all
 	$(Q) $(ESPTOOL) --port $(ESPPORT) --baud $(ESPBAUD) write_flash -fs $(ET_FS) -ff $(ET_FF) \
 	  0x00000 "$(SDK_BASE)/bin/boot_v1.6.bin" 0x01000 $(FW_BASE)/user1.bin \
 	  $(ET_BLANK) $(SDK_BASE)/bin/blank.bin
+
+fullflash: all
+	$(Q) $(ESPTOOL) --port $(ESPPORT) --baud $(ESPBAUD) write_flash -fs $(ET_FS) -ff $(ET_FF) \
+	  0x00000 "$(SDK_BASE)/bin/boot_v1.6.bin" 0x01000 $(FW_BASE)/user1.bin \
+	  $(ET_INIT_DATA) $(SDK_BASE)/bin/esp_init_data_default.bin $(ET_BLANK) $(SDK_BASE)/bin/blank.bin
+
+
 
 tools/$(HTML_COMPRESSOR):
 	$(Q) echo "The jar files in the tools dir are missing, they should be in the source repo"
