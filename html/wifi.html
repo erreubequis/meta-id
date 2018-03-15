@@ -44,12 +44,6 @@
             <input id="wifi-passwd" type="password" name="passwd" placeholder="password">
             <button id="connect-button" type="submit" class="pure-button button-primary">Connect!</button>
           </form>
-        </div></div></div>
-      </div>
-      <div class="pure-g">
-        <div class="pure-u-1 pure-u-md-1-2"><div class="card">
-          <h1><a href="#" id="wifi-special">Special Settings</a></h1>
-          <div id="specialdiv" hidden>
           <form action="#" id="specform" class="pure-form" >
             <legend>Special settings, use with care!</legend>
             <div class="form-horizontal">
@@ -72,8 +66,7 @@
             <button id="special-button" type="submit" class="pure-button button-primary">Change!</button>
           </form>
 		<br/><br/>
-        </div></div></div>
-      <div class="pure-g">
+        </div></div>
         <div class="pure-u-1 pure-u-md-1-2"><div class="card">
           <h1><a href="#" id="wifi-send">Send a message</a></h1>
           <div id="senddiv" hidden>
@@ -88,8 +81,6 @@
 		<br/><br/>
         </div></div>
       </div></div>
-    </div>
-     <div class="pure-g">
         <div class="pure-u-1 pure-u-md-1-2"><div class="card">
           <h1><a href="/init.html" id="reset-pass">Reset Password</a></h1>
         </div></div>
@@ -102,7 +93,6 @@ onLoad(function() {
   getWifiInfo();
   bnd($("#wifi-state"), "click", function(e){toggle("statediv")});
   bnd($("#wifi-config"), "click", function(e){toggle("wifidiv")});
-  bnd($("#wifi-special"), "click", function(e){toggle("specialdiv")});
   bnd($("#wifi-send"), "click", function(e){toggle("senddiv")});
   bnd($("#wifiform"), "submit", changeWifiAp);
   bnd($("#specform"), "submit", changeSpecial);
