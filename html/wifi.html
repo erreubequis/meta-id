@@ -27,6 +27,7 @@
           <form action="#" id="wifiform" class="pure-form pure-form-stacked" >
             <legend>To connect to a WiFi network, please select one of the detected networks,
                enter the password, and hit the connect button...</legend>
+            <button id="scan-button" type="submit" class="pure-button button-primary">Scan!</button>
             <label>Network SSID</label>
             <div id="aps">Scanning... <div class="spinner"></div></div>
             <label for="opt-hiddenssid">
@@ -92,6 +93,7 @@ onLoad(function() {
   bnd($("#dhcp-ron"), "click", doDhcp);
   bnd($("#dhcp-roff"), "click", doStatic);
   bnd($("#sendform"), "submit", sendServer);
+  bnd($("#scan-button"), "click", scanAPs);
   scanTimeout = window.setTimeout(scanAPs, 500);
 });
 </script>

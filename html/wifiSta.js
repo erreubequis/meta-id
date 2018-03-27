@@ -73,7 +73,7 @@ function scanResult() {
         var cb = $("#connect-button");
         cb.className = cb.className.replace(" pure-button-disabled", "");
         if (scanTimeout != null) clearTimeout(scanTimeout);
-        scanTimeout = window.setTimeout(scanAPs, 20000);
+//        scanTimeout = window.setTimeout(scanAPs, 20000);
       } else {
         window.setTimeout(scanResult, 1000);
       }

@@ -276,14 +276,14 @@ void metaHttpCallback(char * response_body, int http_status, char * response_hea
 
 
 int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
-  char buff[1024];
+  char buff[256];
   char msg[140];
   int len;
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
   len = 0;
   len|=getStringArg(connData, "msg", msg, 128);
-  len = os_sprintf(buff, "http://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d&msg=%s",	wifiSignalStrength(-1),msg);
-  metaSSID(buff+41);
+  len = os_sprintf(buff, "https://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d&msg=%s",	wifiSignalStrength(-1),msg);
+  metaSSID(buff+42);
   http_get(buff, "", metaHttpCallback);
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
@@ -293,7 +293,7 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   msg[len]=',';
   metaSSID(msg+os_strlen(msg)+1);
   msg[len+5]=0;
-  wpXmlRpcSend(msg);
+//  wpXmlRpcSend(msg);
   return HTTPD_CGI_DONE;
 }
 

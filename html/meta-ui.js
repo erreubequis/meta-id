@@ -627,7 +627,7 @@ function changeMetaStatus(e) {
 }
 
 function setMeta(b,d){
-	ajaxSpin("POST","/meta/gpio?num="+b+"&v="+(d?"-1":"-2"),
+	ajaxReq("POST","/meta/gpio?num="+b+"&v="+(d?"-1":"-2"),
 	function(){fetchMeta();
   }, function () {
 	fetchMeta();
