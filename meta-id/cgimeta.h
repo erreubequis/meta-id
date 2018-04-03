@@ -12,7 +12,7 @@ int cgiMetaDump(HttpdConnData *connData);
 int cgiMetaWav(HttpdConnData *connData);
 int cgiMetaGpio(HttpdConnData *connData);
 int cgiMetaGetSignal(HttpdConnData *connData);
-void cgiMetaInit();
+//void cgiMetaInit();
 int metaCheckHash (int32 hash);
 int cgiMetaLogout(HttpdConnData *connData);
 int cgiMetaGetSSID(HttpdConnData *connData);
@@ -23,6 +23,5 @@ int ICACHE_FLASH_ATTR cgiMetaGetTimers(HttpdConnData *connData) ;
 int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) ;
 extern char* rst_codes[7];
 extern char* flash_maps[7];
-extern char MetaLimen[16];
 
 #endif // CGIMETA_H

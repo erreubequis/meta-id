@@ -384,7 +384,7 @@ static void ICACHE_FLASH_ATTR dns_callback(const char * hostname, ip_addr_t * ad
 
 		if (req->secure) {
 			int rc;
-			espconn_secure_set_size(ESPCONN_CLIENT,8192); // set SSL buffer size
+			espconn_secure_set_size(ESPCONN_CLIENT,4096); // set SSL buffer size
 			rc=espconn_secure_connect(conn);
 			if(rc!=0){
 				switch(rc){

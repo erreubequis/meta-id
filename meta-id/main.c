@@ -37,6 +37,8 @@
 #include "gpio.h"
 #include "cgiservices.h"
 #include "captdns.h"
+/*#include "cert.h"
+#include "private_key.h"*/
 
 #undef LWIP_MDNS
 
@@ -184,6 +186,8 @@ bool restoreOk;
   //uart_init(115200, 115200);
   //logInit();
   //os_delay_us(100000L);
+	os_printf("SDK version:%s\n", system_get_sdk_version());
+	system_print_meminfo();
   restoreOk = configRestore();
   // Init gpio pin registers
   gpio_init();
@@ -208,8 +212,10 @@ bool restoreOk;
   // Status LEDs
   statusInit();
   serledInit();
-  cgiMetaInit();
-
+/*
+espconn_secure_set_default_certificate(default_certificate,default_certificate_len);
+espconn_secure_set_default_private_key(default_private_key,default_private_key_len);
+*/
   // Wifi
   wifiInit();
   // init the flash filesystem with the html stuff

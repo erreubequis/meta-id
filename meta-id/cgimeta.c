@@ -39,18 +39,7 @@
 #define PWM_0_OUT_IO_FUNC FUNC_GPIO12
 #define PWM_CHANNEL 1
 
-char MetaLimen[16]; // if -2 : OUTPUT LOW ; -1 : OUTPUT HIGH; 0: undef; >0: INPUT VALUE
-
 static uint32 systime, rtctime;
-
-int ICACHE_FLASH_ATTR meta_init_pwm();
-
-void ICACHE_FLASH_ATTR cgiMetaInit() {
-  for (int i=0; i<16; i++) {
-	MetaLimen[i] = 0;
-	}
-meta_init_pwm();
-}
 
 static char *connStatuses[] = { "idle", "connecting", "wrong password", "AP not found",
                          "failed", "got IP address" };
@@ -284,7 +273,7 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   len|=getStringArg(connData, "msg", msg, 128);
   len = os_sprintf(buff, "https://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d&msg=%s",	wifiSignalStrength(-1),msg);
   metaSSID(buff+42);
-  http_get(buff, "", metaHttpCallback);
+  http_get(buff, buff, metaHttpCallback);
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
   systime=system_get_time();
@@ -319,15 +308,9 @@ int ICACHE_FLASH_ATTR cgiMetaGetGpio(HttpdConnData *connData) {
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
   len = os_sprintf(buff, "{ ");
   for (int i=0; i<15; i++) {
- 	if (MetaLimen[i]>0 ){ 
-		MetaLimen[i] = GPIO_INPUT_GET(GPIO_ID_PIN(i))+1;
-	}
-	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d, ",i,MetaLimen[i]);
+	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d, ",i,GPIO_INPUT_GET(GPIO_ID_PIN(i))+1);
   }
- 	if (MetaLimen[15]>0 ){ 
-		MetaLimen[15] = GPIO_INPUT_GET(GPIO_ID_PIN(15))+1;
-	}
-	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d ",15,MetaLimen[15]);
+	len += os_sprintf(buff+len, "\"meta-gpio-%02d\":%d ",15,GPIO_INPUT_GET(GPIO_ID_PIN(15))+1);
 	len += os_sprintf(buff+len,"}");
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
@@ -363,8 +346,6 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
 		httpdSend(connData, buff, len);
 		return HTTPD_CGI_DONE;
 	}
-  DBG("META: setting gpio |%d| to |%d| - old : %d\n",num,out, MetaLimen[num]);
-	if(MetaLimen[num]==0){
 		switch(num){
 			case 0:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO0); break;
 			case 1:PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO1); break;
@@ -386,16 +367,13 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
 				len = os_sprintf(buff, "ko: unhandled number %d ",num);
 				jsonHeader(connData, 200);
 				httpdSend(connData, buff, len);
-				DBG("META: KO for |%d| to |%d| - old : %d\n",num,out, MetaLimen[num]);
 				return HTTPD_CGI_DONE;
-		}
 	}
 
   len = os_sprintf(buff, "%d",ok);
   if(out == -1){
 	GPIO_OUTPUT_SET(GPIO_ID_PIN(num), 1); 
 	PIN_PULLUP_EN(PERIPHS_IO_MUX_MTDI_U); 
-	MetaLimen[num] = -1;
 	  }
   if(out == -2){
 	GPIO_OUTPUT_SET(GPIO_ID_PIN(num), 0); 
@@ -404,9 +382,6 @@ int ICACHE_FLASH_ATTR cgiMetaSetGpio(HttpdConnData *connData) {
   if(out == 1){
 	GPIO_DIS_OUTPUT(GPIO_ID_PIN(num)); 
 	  }
-   MetaLimen[num]=out;
-
-  DBG("META: ok for |%d| to |%d| - old : %d\n",num,out, MetaLimen[num]);
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
   return HTTPD_CGI_DONE;
@@ -456,7 +431,7 @@ jsonHeader(connData, 200);
 }
 
 
-
+/*
 int ICACHE_FLASH_ATTR meta_init_gpio() {
 	int r=1;
 	if(GPIO_INPUT_GET(GPIO_ID_PIN(0))==1){
@@ -470,7 +445,7 @@ int ICACHE_FLASH_ATTR meta_init_gpio() {
 		}
 	}
 	return r;
-}
+}*/
 /**
  * -1 : unknown, waiting for authentication
  *  0 : login box // if no wifi config and no auth
@@ -533,11 +508,11 @@ int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) {
 
 
 
-
+/*
 int ICACHE_FLASH_ATTR meta_init_pwm(){
 uint32_t duty=0;
 	uint32 io_info[][3]={{PWM_0_OUT_IO_MUX,PWM_0_OUT_IO_FUNC, PWM_0_OUT_IO_NUM}};
 pwm_init( 150, &duty, 0,io_info);
 pwm_start();
 return 1;
-}
+}*/
