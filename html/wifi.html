@@ -64,17 +64,63 @@
         <div class="pure-u-1 pure-u-md-1-2"><div class="card">
           <h1><a href="#" id="wifi-send">Send a message</a></h1>
           <div id="senddiv" hidden>
-          <form action="#" id="sendform" class="pure-form" >
             <legend>Send data to server</legend>
+          <div class="card">
+            <h1>MQTT
+              <div id="mqtt-spinner" class="spinner spinner-small"></div>
+            </h1>
+            <form action="#" id="mqtt-form" class="pure-form" hidden>
+              <div>
+                <input type="checkbox" name="mqtt-enable"/>
+                <label>Enable MQTT client</label>
+              </div>
+              <div>
+                <label>MQTT client state: </label>
+                <b id="mqtt-state"></b>
+              </div>
+              <br>
+              <button id="mqtt-button" type="submit" class="pure-button button-primary">
+                Update server settings!
+              </button>
+            </form>
+          </div>
             <div class="form-horizontal">
-              <label for="msg" style="margin-right:1em">
-                <input type="text" name="send-msg"  id="send-msg"/>
-                </form>
-            <button id="send-button" type="submit" class="pure-button button-primary">Send!</button>
-          </form>
-		<br/><br/>
-        </div></div>
-      </div></div>
+
+            <form action="#" id="mqtt-status-form" class="pure-form" hidden>
+              <div class="form-horizontal">
+                <div id="mqtt-status-spinner" class="spinner spinner-small"></div>
+                <input type="checkbox" name="mqtt-status-enable"/>
+                <label>Enable status reporting via MQTT</label>
+              </div>
+              <br>
+              <div class="pure-form-stacked">
+                <label>Status topic</label>
+                <input type="text" name="mqtt-status-topic"/>
+                Message: <tt id="mqtt-status-value"></tt>
+                <div class="popup">MQTT topic to which status message is sent</div>
+              </div>
+              <button id="mqtt-status-button" type="submit" class="pure-button button-primary">
+                Update status settings!
+              </button>
+            </form>
+          </div>
+          <div class="card">
+            <h1>Status reporting
+              <div id="mqtt-test-spinner" class="spinner spinner-small"></div>
+            </h1>
+            <form action="#" id="mqtt-test-form" class="pure-form" hidden>
+              <div class="form-horizontal">
+                <input name="mqtt-test"/>
+                <label>Enable status reporting via MQTT</label>
+              </div>
+              <br>
+              <button id="mqtt-test-button" type="submit" class="pure-button button-primary">
+                Send !
+              </button>
+            </form>
+          </div>
+          </div>
+          </div>
         <div class="pure-u-1 pure-u-md-1-2"><div class="card">
           <h1><a href="/init.html" id="reset-pass">Reset Password</a></h1>
         </div></div>
@@ -82,9 +128,11 @@
     </div>
 
 <script src="wifiSta.js"></script>
+<script src="mqtt.js"></script>
 <script type="text/javascript">
 onLoad(function() {
   getWifiInfo();
+  fetchMqtt();
   bnd($("#wifi-state"), "click", function(e){toggle("statediv")});
   bnd($("#wifi-config"), "click", function(e){toggle("wifidiv")});
   bnd($("#wifi-send"), "click", function(e){toggle("senddiv")});
@@ -92,8 +140,12 @@ onLoad(function() {
   bnd($("#specform"), "submit", changeSpecial);
   bnd($("#dhcp-ron"), "click", doDhcp);
   bnd($("#dhcp-roff"), "click", doStatic);
-  bnd($("#sendform"), "submit", sendServer);
+//  bnd($("#sendform"), "submit", sendServer);
   bnd($("#scan-button"), "click", scanAPs);
+  bnd($("#mqtt-form"), "submit", changeMqtt);
+  bnd($("#mqtt-test-form"), "submit", changeMqttTest);
+  bnd($("#mqtt-status-form"), "submit", changeMqttStatus);
+
   scanTimeout = window.setTimeout(scanAPs, 500);
 });
 </script>

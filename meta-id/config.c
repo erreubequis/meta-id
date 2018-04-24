@@ -26,7 +26,7 @@ FlashConfig flashDefault = {
   .mqtt_port    = 1883, .mqtt_keepalive = 60,
   .mqtt_old_host  = "\0", .mqtt_clientid = "\0",
   .mqtt_username  = "meta-id\0", .mqtt_password = "meta-id\0", .mqtt_status_topic = "meta-id\0",
-  .mqtt_host      = "x.ikujam.org\0",
+  .mqtt_host      = "mqtt.meta-id.info\0",
   .sys_descr 	  = "\0",
   .rx_pullup	  = 1,
   .sntp_server  = "us.pool.ntp.org\0",

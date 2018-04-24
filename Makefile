@@ -106,7 +106,7 @@ LED_SERIAL_PIN      ?= 14
 # --------------- meta-id modules config options ---------------
 
 # Optional Modules: mqtt rest socket web-server syslog
-MODULES ?= 
+MODULES ?= mqtt
 
 # --------------- esphttpd config options ---------------
 
@@ -254,7 +254,7 @@ EXTRA_INCDIR 	= include .
 LIBS = c gcc hal phy pp net80211 wpa main lwip_536 crypto pwm ssl
 
 # compiler flags using during compilation of source files
-CFLAGS	+= -Os -ggdb -std=c99 -Werror -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions \
+CFLAGS	+= -Os -std=c99 -Werror -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions \
 	-nostdlib -mlongcalls -mtext-section-literals -ffunction-sections -fdata-sections \
 	-D__ets__ -DICACHE_FLASH -Wno-address -DFIRMWARE_SIZE=$(ESP_FLASH_MAX) \
 	-DMCU_RESET_PIN=$(MCU_RESET_PIN) -DMCU_ISP_PIN=$(MCU_ISP_PIN) \
@@ -448,7 +448,7 @@ $(BUILD_BASE)/espfs_img.o: html/ html/wifi/ html/text/ espfs/mkespfsimage/mkespf
 	$(Q) cp -r html/*.css html_compressed;
 	$(Q) cp -r html/*.js html_compressed;
 #	$(Q) cp -r html/wifi/*.js html_compressed/wifi;
-	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
+#	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
 ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	$(Q) echo "Compressing assets with htmlcompressor. This may take a while..."
 	$(Q) java -jar tools/$(HTML_COMPRESSOR) \

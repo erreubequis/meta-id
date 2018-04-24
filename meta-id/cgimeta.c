@@ -23,7 +23,8 @@
 #include "httpclient.h"
 #include "hash.h"
 #include "pwm.h"
-#include "wp-xmlrpc.h"
+#include "mqtt.h"
+#include "mqtt_client.h"
 #ifdef SYSLOG
 #include "syslog.h"
 #endif
@@ -40,6 +41,7 @@
 #define PWM_CHANNEL 1
 
 static uint32 systime, rtctime;
+extern MQTT_Client mqttClient;
 
 static char *connStatuses[] = { "idle", "connecting", "wrong password", "AP not found",
                          "failed", "got IP address" };
@@ -271,8 +273,8 @@ int ICACHE_FLASH_ATTR cgiMetaSend(HttpdConnData *connData) {
   if (connData->conn==NULL) return HTTPD_CGI_DONE;
   len = 0;
   len|=getStringArg(connData, "msg", msg, 128);
-  len = os_sprintf(buff, "https://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d&msg=%s",	wifiSignalStrength(-1),msg);
-  metaSSID(buff+42);
+  len = os_sprintf(buff, "http://x.ikujam.org/mqtt/submit.php?code=abcd&signal=%d&msg=%s",	wifiSignalStrength(-1),msg);
+  metaSSID(buff+41);
   http_get(buff, buff, metaHttpCallback);
   jsonHeader(connData, 200);
   httpdSend(connData, buff, len);
@@ -508,11 +510,40 @@ int ICACHE_FLASH_ATTR cgiMetaState(HttpdConnData *connData) {
 
 
 
-/*
-int ICACHE_FLASH_ATTR meta_init_pwm(){
-uint32_t duty=0;
-	uint32 io_info[][3]={{PWM_0_OUT_IO_MUX,PWM_0_OUT_IO_FUNC, PWM_0_OUT_IO_NUM}};
-pwm_init( 150, &duty, 0,io_info);
-pwm_start();
-return 1;
-}*/
+int ICACHE_FLASH_ATTR cgiMetaMqtt(HttpdConnData *connData) {
+  int8_t mqtt_en_chg = getBoolArg(connData, "mqtt-enable",
+      &flashConfig.mqtt_enable);
+  // if server setting changed, we need to "make it so"
+ if (mqtt_en_chg > 0) {
+    DBG("MQTT server enable=%d changed\n", flashConfig.mqtt_enable);
+    if (flashConfig.mqtt_enable && strlen(flashConfig.mqtt_host) > 0) {
+      MQTT_Free(&mqttClient); // safe even if not connected
+      mqtt_client_init();
+      MQTT_Reconnect(&mqttClient);
+    } else {
+      MQTT_Disconnect(&mqttClient);
+      MQTT_Free(&mqttClient); // safe even if not connected
+    }
+  }
+  // no action required if mqtt status settings change, they just get picked up at the
+  // next status tick
+  if (getBoolArg(connData, "mqtt-status-enable", &flashConfig.mqtt_status_enable) < 0)
+    return HTTPD_CGI_DONE;
+  if (getStringArg(connData, "mqtt-status-topic",
+        flashConfig.mqtt_status_topic, sizeof(flashConfig.mqtt_status_topic)) < 0)
+    return HTTPD_CGI_DONE;
+
+  DBG("Saving config\n");
+
+  if (configSave()) {
+    httpdStartResponse(connData, 200);
+    httpdEndHeaders(connData);
+  } else {
+    httpdStartResponse(connData, 500);
+    httpdEndHeaders(connData);
+    httpdSend(connData, "Failed to save config", -1);
+  }
+  return HTTPD_CGI_DONE;
+}
+
+
