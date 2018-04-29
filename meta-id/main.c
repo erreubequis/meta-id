@@ -43,6 +43,14 @@
 
 #undef LWIP_MDNS
 
+
+#ifdef NOSSL
+sint8 espconn_secure_connect(struct espconn *espconn){return 0;}
+sint8 espconn_secure_disconnect(struct espconn *espconn){return 0;}
+sint8 espconn_secure_sent(struct espconn *espconn, uint8 *psent, uint16 length){return 0;}
+bool espconn_secure_set_size(uint8 level, uint16 size){return 0;}
+#endif
+
 #ifdef WEBSERVER
 #include "web-server.h"
 #endif

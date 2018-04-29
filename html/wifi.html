@@ -66,10 +66,7 @@
           <div id="senddiv" hidden>
             <legend>Send data to server</legend>
           <div class="card">
-            <h1>MQTT
-              <div id="mqtt-spinner" class="spinner spinner-small"></div>
-            </h1>
-            <form action="#" id="mqtt-form" class="pure-form" hidden>
+            <form action="#" id="mqtt-form" class="pure-form" >
               <div>
                 <input type="checkbox" name="mqtt-enable"/>
                 <label>Enable MQTT client</label>
@@ -86,9 +83,8 @@
           </div>
             <div class="form-horizontal">
 
-            <form action="#" id="mqtt-status-form" class="pure-form" hidden>
+            <form action="#" id="mqtt-status-form" class="pure-form" >
               <div class="form-horizontal">
-                <div id="mqtt-status-spinner" class="spinner spinner-small"></div>
                 <input type="checkbox" name="mqtt-status-enable"/>
                 <label>Enable status reporting via MQTT</label>
               </div>
@@ -105,10 +101,7 @@
             </form>
           </div>
           <div class="card">
-            <h1>Status reporting
-              <div id="mqtt-test-spinner" class="spinner spinner-small"></div>
-            </h1>
-            <form action="#" id="mqtt-test-form" class="pure-form" hidden>
+            <form action="#" id="mqtt-test-form" class="pure-form" >
               <div class="form-horizontal">
                 <input name="mqtt-test"/>
                 <label>Enable status reporting via MQTT</label>
@@ -128,7 +121,6 @@
     </div>
 
 <script src="wifiSta.js"></script>
-<script src="mqtt.js"></script>
 <script type="text/javascript">
 onLoad(function() {
   getWifiInfo();

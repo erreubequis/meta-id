@@ -244,6 +244,9 @@ ifneq (,$(findstring socket,$(MODULES)))
 	CFLAGS		+= -DSOCKET
 endif
 
+# flag to disable espconn_secure functions
+CFLAGS		+= -DNOSSL 
+
 # which modules (subdirectories) of the project to include in compiling
 LIBRARIES_DIR 	= libraries
 MODULES		+= espfs httpd cmd serial meta-id user
@@ -251,7 +254,7 @@ MODULES		+= $(foreach sdir,$(LIBRARIES_DIR),$(wildcard $(sdir)/*))
 EXTRA_INCDIR 	= include .
 
 # libraries used in this project, mainly provided by the SDK
-LIBS = c gcc hal phy pp net80211 wpa main lwip_536 crypto pwm ssl
+LIBS = c gcc hal phy pp net80211 wpa main lwip_536 crypto pwm
 
 # compiler flags using during compilation of source files
 CFLAGS	+= -Os -std=c99 -Werror -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions \
@@ -448,7 +451,7 @@ $(BUILD_BASE)/espfs_img.o: html/ html/wifi/ html/text/ espfs/mkespfsimage/mkespf
 	$(Q) cp -r html/*.css html_compressed;
 	$(Q) cp -r html/*.js html_compressed;
 #	$(Q) cp -r html/wifi/*.js html_compressed/wifi;
-#	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
+	$(Q) cp -r html/Lato-Embed.ttf html_compressed/fonts;
 ifeq ("$(COMPRESS_W_HTMLCOMPRESSOR)","yes")
 	$(Q) echo "Compressing assets with htmlcompressor. This may take a while..."
 	$(Q) java -jar tools/$(HTML_COMPRESSOR) \
