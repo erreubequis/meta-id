@@ -28,5 +28,6 @@ void wifiGetApName(int, char *);
 int wifiSignalStrength(int);
 void connectToNetwork(char *, char *);
 void wifiStartScan();
+void statusWifiUpdate(uint8_t state);
 
 #endif

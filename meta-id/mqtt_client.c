@@ -18,6 +18,10 @@ static MqttCallback disconnected_cb;
 static MqttCallback published_cb;
 static MqttDataCallback data_cb;
 
+#define MQTT_STATUS_INTERVAL (60*1000)
+
+static ETSTimer mqttStatusTimer;
+
 void ICACHE_FLASH_ATTR
 mqttConnectedCb(MQTT_Client* client) {
   DBG("MQTT Client: Connected\n");
@@ -76,6 +80,30 @@ wifiStateChangeCb(uint8_t status)
   }
 }
 
+int ICACHE_FLASH_ATTR
+mqttStatusMsg(char *buf) {
+  sint8 rssi = wifi_station_get_rssi();
+  if (rssi > 0) rssi = 0; // not connected or other error
+  //os_printf("timer rssi=%d\n", rssi);
+
+  // compose MQTT message
+  return os_sprintf(buf,
+    "{\"rssi\":%d, \"heap_free\":%ld}",
+    rssi, (unsigned long)system_get_free_heap_size());
+}
+
+
+// Timer callback to send an RSSI update to a monitoring system
+static void ICACHE_FLASH_ATTR mqttStatusCb(void *v) {
+  if (!flashConfig.mqtt_status_enable || os_strlen(flashConfig.mqtt_status_topic) == 0 ||
+    mqttClient.connState != MQTT_CONNECTED)
+    return;
+
+  char buf[128];
+  mqttStatusMsg(buf);
+  MQTT_Publish(&mqttClient, flashConfig.mqtt_status_topic, buf, os_strlen(buf), 1, 0);
+}
+
 void ICACHE_FLASH_ATTR
 mqtt_client_init()
 {
@@ -93,6 +121,10 @@ mqtt_client_init()
   //  MQTT_Connect(&mqttClient);
 
   wifiAddStateChangeCb(wifiStateChangeCb);
+  os_timer_disarm(&mqttStatusTimer);
+  os_timer_setfn(&mqttStatusTimer, mqttStatusCb, NULL);
+  os_timer_arm(&mqttStatusTimer, MQTT_STATUS_INTERVAL, 1); // recurring timer
+
 }
 
 void ICACHE_FLASH_ATTR
@@ -114,4 +146,5 @@ void ICACHE_FLASH_ATTR
 mqtt_client_on_data(MqttDataCallback dataCb) {
   data_cb = dataCb;
 }
+
 #endif // MQTT

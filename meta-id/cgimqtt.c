@@ -12,7 +12,6 @@ char *mqttState(void) {
 #include <esp8266.h>
 #include "cgi.h"
 #include "config.h"
-#include "status.h"
 #include "mqtt_client.h"
 #include "cgimqtt.h"
 

@@ -17,7 +17,7 @@ Cgi/template routines for the /wifi url.
 #include <esp8266.h>
 #include "cgiwifi.h"
 #include "cgi.h"
-#include "status.h"
+//#include "status.h"
 #include "config.h"
 #include "log.h"
 
@@ -1002,3 +1002,8 @@ ICACHE_FLASH_ATTR int wifiSignalStrength(int i) {
 
   return rssi;
 }
+
+void ICACHE_FLASH_ATTR statusWifiUpdate(uint8_t state) {
+  wifiState = state;
+}
+

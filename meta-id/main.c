@@ -30,7 +30,7 @@
 #include "espfs.h"
 #include "uart.h"
 #include "serbridge.h"
-#include "status.h"
+//#include "status.h"
 #include "serled.h"
 #include "console.h"
 #include "config.h"
@@ -223,7 +223,7 @@ bool restoreOk;
   os_printf("\n\n** %s\n", esp_link_version);
   os_printf("Flash config restore %s\n", restoreOk ? "ok" : "*FAILED*");
   // Status LEDs
-  statusInit();
+//  statusInit();
   serledInit();
 /*
 espconn_secure_set_default_certificate(default_certificate,default_certificate_len);
