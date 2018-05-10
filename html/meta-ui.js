@@ -390,6 +390,18 @@ function showNotification(text) {
     }, 4000);
 }
 
+function loginNotification(text) {
+	if(text=='')return;
+  var el = $("#loginnotification");
+  el.innerHTML = text;
+  el.removeAttribute('hidden');
+  if (notifTimeout != null) clearTimeout(notifTimeout);
+  notifTimout = setTimeout(function() {
+      el.setAttribute('hidden', '');
+      notifTimout = null;
+    }, 4000);
+}
+
 //===== GPIO Pin mux card
 
 var pinPresets = {
@@ -582,11 +594,12 @@ function stateMachine (resp) {
 }
 
 function loginSuccess(resp){
-	stateMachine(resp);
+    loginNotification("Login success");
+	document.location.href="wifi.html";
 }
 
 function loginFail(s,st){
-    showNotification("Login failed");
+    loginNotification("Login failed");
 	stateMachine(st);
 }
 
